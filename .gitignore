@@ -1,0 +1,10 @@
+# Só o site vai para o repositório público (GitHub Pages).
+# A arte, o SQL e o LEIA-ME, que tem as notas internas, ficam só neste Mac.
+/*
+!/index.html
+!/estilo.css
+!/js/
+!/a/
+!/.gitignore
+!/.nojekyll
+.DS_Store
