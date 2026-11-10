@@ -1,21 +1,9 @@
-// Ranking compartilhado da partida rápida, guardado no Supabase (projeto toctoc-adn, supabase/ranking.sql).
-// A chave é a pública ("publishable"), feita para ficar no site: quem protege a tabela é a RLS,
-// e só a função registrar_pontos escreve, conferindo o nome e a pontuação.
+// Ranking compartilhado da partida rápida, guardado no banco (js/banco.js, supabase/ranking.sql).
+// Qualquer um lê a tabela; só a função registrar_pontos escreve, conferindo o nome e a pontuação.
 import { ler, gravar, idJogador } from './salvo.js';
+import { pedir } from './banco.js';
 import { efeito } from './som.js';
 import { el } from './util.js';
-
-const BANCO = 'https://cdhyhccfkbhrgtfmjlok.supabase.co/rest/v1';
-const CHAVE = 'sb_publishable_itdPX8KdmTCo3qio7PUGTw_rbRsJAqP';
-
-async function pedir(caminho, opcoes = {}) {
-  const r = await fetch(`${BANCO}/${caminho}`, {
-    ...opcoes,
-    headers: { apikey: CHAVE, 'Content-Type': 'application/json', ...(opcoes.headers || {}) },
-  });
-  if (!r.ok) throw new Error(`ranking ${r.status}`);
-  return r;
-}
 
 export async function listarRanking(limite = 50) {
   const r = await pedir(`ranking?select=jogador,nome,pontos&order=pontos.desc,atualizado.asc&limit=${limite}`);
@@ -47,7 +35,9 @@ export function formNome({ texto = 'Como você quer aparecer no ranking?', botao
     type: 'text', maxlength: '20', placeholder: 'Seu nome ou apelido',
     autocomplete: 'nickname', enterkeyhint: 'done', 'aria-label': 'Seu nome no ranking',
   });
-  campo.value = ler().nome || '';
+  // sem nome no ranking ainda, sugere o primeiro nome do cadastro (a pessoa confirma antes de aparecer)
+  const s = ler();
+  campo.value = s.nome || s.lead?.primeiroNome || '';
   const erro = el('small', { class: 'nome-erro' });
   const form = el('form', { class: 'form-nome' }, [
     el('b', { text: texto }),

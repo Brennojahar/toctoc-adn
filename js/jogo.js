@@ -1,9 +1,10 @@
-// A partida: buracos, aparições, marteladas, combo, poderes do Caramelo e da Gaia, fim.
+// A partida: buracos, aparições, marteladas, combo, poderes do Tijolo e da Gaia, fim.
 import { configFase, etapaDaFase, numEtapa, fasesDaEtapa, ETAPAS, COMBOS, estrelas, TOTAL_FASES, AJUDAS } from './dados.js';
 import { efeito, vibrar, tocarMusica, pararMusica } from './som.js';
 import { ler, gravar } from './salvo.js';
 import { el, img, botao, IMG } from './util.js';
 import { caixaRanking } from './ranking.js';
+import { atualizarLead } from './cadastro.js';
 
 const CHANCE_ADENECO = 0.28;
 const PAUSA_BONUS = 8000; // ms mínimos entre um cachorro e outro
@@ -82,7 +83,7 @@ export function partida(raiz, { fase, ajudas = [], ir }) {
     const poder = agora < E.poderAte;
     estado.hidden = !(parado || poder);
     estado.className = 'estado ' + (parado ? 'super' : 'poder');
-    estado.textContent = parado ? 'Aprovado: relógio parado · x3' : 'Caramelo turbinado · x2';
+    estado.textContent = parado ? 'Aprovado: relógio parado · x3' : 'Tijolo turbinado · x2';
     pagina.classList.toggle('fogo', E.combo >= 10 && !poder && !parado);
     pagina.classList.toggle('poder', poder && !parado);
     pagina.classList.toggle('super', parado);
@@ -130,25 +131,25 @@ export function partida(raiz, { fase, ajudas = [], ir }) {
     E.buracos.forEach((b, i) => { if (b && b.ate < agora) (b.batido || b.coletado ? limpar(i) : sair(i)); });
     const livres = E.buracos.map((b, i) => (b ? -1 : i)).filter(i => i >= 0);
     let quantos = emSuper ? 3 : livres.length > 6 ? 2 : 1;
-    const temCachorro = E.buracos.some(b => b && (b.tipo === 'caramelo' || b.tipo === 'gaia'));
+    const temCachorro = E.buracos.some(b => b && (b.tipo === 'tijolo' || b.tipo === 'gaia'));
     let apareceu = false;
     while (quantos-- > 0 && livres.length) {
       const i = livres.splice(Math.floor(Math.random() * livres.length), 1)[0];
       const podeBonus = !emSuper && !temCachorro && !apareceu && agora - E.ultimoBonus > PAUSA_BONUS;
       const pGaia = podeBonus && !E.gaiaVeio && E.segundos >= duracao * 0.35 ? 0.025 : 0;
-      const pCaramelo = podeBonus ? (tem('ouro') ? 0.08 : 0.035) : 0;
+      const pTijolo = podeBonus ? (tem('ouro') ? 0.08 : 0.035) : 0;
       const r = Math.random();
-      const tipo = r < pGaia ? 'gaia' : r < pGaia + pCaramelo ? 'caramelo'
-        : !emSuper && r < pGaia + pCaramelo + CHANCE_ADENECO ? 'adeneco' : 'monstro';
+      const tipo = r < pGaia ? 'gaia' : r < pGaia + pTijolo ? 'tijolo'
+        : !emSuper && r < pGaia + pTijolo + CHANCE_ADENECO ? 'adeneco' : 'monstro';
       if (tipo === 'gaia') E.gaiaVeio = true;
-      if (tipo === 'gaia' || tipo === 'caramelo') E.ultimoBonus = agora;
+      if (tipo === 'gaia' || tipo === 'tijolo') E.ultimoBonus = agora;
       const monstro = tipo === 'monstro' ? cfg.monstros[Math.floor(Math.random() * cfg.monstros.length)] : null;
-      const vida = cfg.vivo * (tipo === 'gaia' ? 1.9 : tipo === 'caramelo' ? 1.7 : 1) * (emSuper ? 0.85 : 1);
-      const elImg = img(monstro ? `m-${monstro}` : tipo, `sai ${tipo}`);
+      const vida = cfg.vivo * (tipo === 'gaia' ? 1.9 : tipo === 'tijolo' ? 1.7 : 1) * (emSuper ? 0.85 : 1);
+      const elImg = img(monstro ? `m-${monstro}` : tipo, `sai ${tipo}${monstro ? ' m-' + monstro : ''}`);
       elImg.decoding = 'sync';
       mascaras[i].append(elImg);
       E.buracos[i] = { id: seq++, tipo, monstro, ate: agora + vida, el: elImg };
-      if (tipo === 'caramelo' || tipo === 'gaia') {
+      if (tipo === 'tijolo' || tipo === 'gaia') {
         celulas[i].append(el('span', { class: 'puxe' + (tipo === 'gaia' ? ' lilas' : ''), html: '<i>↑</i>Puxe!' }));
       }
       apareceu = true;
@@ -196,7 +197,7 @@ export function partida(raiz, { fase, ajudas = [], ir }) {
       efeito('toc');
       return;
     }
-    if (b.tipo === 'caramelo' || b.tipo === 'gaia') {
+    if (b.tipo === 'tijolo' || b.tipo === 'gaia') {
       if (direto) coletar(i);
       return;
     }
@@ -298,8 +299,8 @@ export function partida(raiz, { fase, ajudas = [], ir }) {
       E.poderAte = Date.now() + 5000;
       const n = espantarMonstros(false);
       pop(i, `+${ganho} · +3 s`, 'bom');
-      banner('Caramelo turbinado!', `+${ganho} e +3 s · ${n ? `${n} monstrinho${n > 1 ? 's' : ''} espantado${n > 1 ? 's' : ''} · ` : ''}pontos em dobro por 5 s`, 'ouro');
-      efeito('caramelo');
+      banner('Tijolo turbinado!', `+${ganho} e +3 s · ${n ? `${n} monstrinho${n > 1 ? 's' : ''} espantado${n > 1 ? 's' : ''} · ` : ''}pontos em dobro por 5 s`, 'ouro');
+      efeito('tijolo');
     }
     animarCombo();
     hud();
@@ -343,7 +344,7 @@ export function partida(raiz, { fase, ajudas = [], ir }) {
       return;
     }
     const b = E.buracos[i];
-    if (b.tipo === 'caramelo' || b.tipo === 'gaia') {
+    if (b.tipo === 'tijolo' || b.tipo === 'gaia') {
       arrasto = { i, y: ev.clientY, id: b.id };
       grade.setPointerCapture?.(ev.pointerId);
       return;
@@ -456,7 +457,9 @@ export function partida(raiz, { fase, ajudas = [], ir }) {
         etapaNova = k;
       }
     }
+    s.partidas = (s.partidas || 0) + 1;
     gravar(s);
+    atualizarLead();
     efeito(passou ? 'fanfarra' : 'derrota');
     // o cenário da fase desfoca e some o placar; depois da vinheta entra a música do menu
     pagina.classList.add('acabou');

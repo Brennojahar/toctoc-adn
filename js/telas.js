@@ -38,12 +38,12 @@ export function inicio(raiz, { ir }) {
     img('herois', 'herois-img'),
     el('i', { class: 'brilho-chave' }),
   ]);
-  [['caramelo', 'Conhecer o Caramelo'], ['adeneco', 'Conhecer o Adeneco'], ['gaia', 'Conhecer a Gaia']].forEach(([id, rotulo]) =>
+  [['tijolo', 'Conhecer o Tijolo'], ['adeneco', 'Conhecer o Adeneco'], ['gaia', 'Conhecer a Gaia']].forEach(([id, rotulo]) =>
     herois.append(botao([], `toque-heroi ${id}`, () => abrirInfo(p, 'heroi', id), rotulo)));
 
   p.append(
     img(`fundo-${etapa.id}`, 'inicio-fundo'),
-    el('header', { class: 'topo' }, [botaoSom(), el('span', { class: 'chip', text: `★ Recorde ${s.recorde}` })]),
+    el('header', { class: 'topo' }, [botaoSom(), img('logo-adn-branco', 'topo-logo'), el('span', { class: 'chip', text: `★ Recorde ${s.recorde}` })]),
     el('div', { class: 'logo', 'aria-label': 'Toc Toc, Adeneco!' }, [el('b', { text: 'Toc Toc,' }), el('b', { text: 'Adeneco!' })]),
     herois,
     el('div', { class: 'botoes' }, [
@@ -65,7 +65,7 @@ export function inicio(raiz, { ir }) {
       el('div', { class: 'especiais' }, [
         el('b', { class: 'sub-tit', text: 'Nossos heróis · clique para conhecer' }),
         especial(p, 'adeneco', 'Não bata no Adeneco', '−3 pontos e o combo zera', 'menos'),
-        especial(p, 'caramelo', 'Caramelo dourado: puxe pra cima', 'Pontos em dobro e +3 segundos', 'ouro'),
+        especial(p, 'tijolo', 'Tijolo dourado: puxe pra cima', 'Pontos em dobro e +3 segundos', 'ouro'),
         especial(p, 'gaia', 'Gaia, a super rara: puxe pra cima', '"Aprovado." Relógio parado e pontos x3', 'super'),
       ]),
     ]),
@@ -234,7 +234,7 @@ export function rapida(raiz, { ir }) {
       el('p', { text: 'Acerte o máximo de monstrinhos em 60 segundos. Sem fases, só recorde.' }),
       regra('m-juros', 'Monstrinho', '+1 ponto e soma combo', 'mais'),
       regra('adeneco', 'Adeneco (não bata!)', '−3 e zera o combo', 'menos'),
-      regra('caramelo', 'Caramelo dourado: puxe pra cima', 'Pontos em dobro por 5 s e +3 s', 'ouro'),
+      regra('tijolo', 'Tijolo dourado: puxe pra cima', 'Pontos em dobro por 5 s e +3 s', 'ouro'),
       regra('gaia', 'Gaia, a super rara: puxe pra cima', '"Aprovado." Relógio parado e x3 por 5 s', 'super'),
       el('div', { class: 'recorde' }, [el('span', { text: 'Seu recorde' }), el('b', { text: `${s.recorde} pontos` })]),
       botao('Começar', 'btn azul grande bloco pulsa', () => ir('#/partida/rapida')),

@@ -21,7 +21,7 @@ function audio() {
   return ctx;
 }
 
-// Sons gravados (Seed Audio): o latido do Caramelo e o "Aprovado." na voz da Gaia.
+// Sons gravados (Seed Audio): o latido do Tijolo e o "Aprovado." na voz da Gaia.
 const AMOSTRAS = { latido: 'a/sons/latido.mp3', aprovado: 'a/sons/gaia-aprovado.mp3' };
 const buffers = {};
 function carregarAmostras() {
@@ -166,7 +166,7 @@ export function efeito(nome, n = 0) {
       [[330, 0.38], [311, 0.56], [294, 0.74]].forEach(([f, d]) => tom(f, t + d, 0.16, 'square', 0.07, f * 0.97));
       tom(262, t + 0.92, 0.45, 'square', 0.08, 220);
       break;
-    case 'caramelo': {
+    case 'tijolo': {
       // latido feliz de verdade; se o arquivo ainda não carregou, vai o latido sintetizado
       const d = amostra('latido', t);
       if (!d) { latido(t); latido(t + 0.16, 1.08); }
