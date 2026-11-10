@@ -247,6 +247,10 @@ img { -webkit-user-drag: none; user-select: none; }
 }
 /* o logo oficial da ADN no topo da capa */
 .topo-logo { width: 86px; height: auto; filter: drop-shadow(0 2px 6px rgba(0, 30, 69, .45)); }
+/* som e recorde têm larguras diferentes: com 3 colunas iguais nas pontas, o logo fica no centro da tela */
+.topo-capa { display: grid; grid-template-columns: 1fr auto 1fr; }
+.topo-capa > :first-child { justify-self: start; }
+.topo-capa > :last-child { justify-self: end; }
 
 /* trio da capa: Adeneco de pé, Tijolo e Gaia sentados; cada um abre o próprio card */
 .herois {

@@ -86,7 +86,7 @@ export const HEROIS = {
 // `parabens`: a página de parabéns da etapa. Textos de rascunho: a ADN aprova antes de publicar.
 export const ETAPAS = [
   { id: 'casa',     nome: 'Casa alugada',        sub: 'Onde tudo começa',          monstros: ['aluguel', 'goteira'],
-    anel: '#a38975', borda: '#4b3e34', premio: ['aluguel', 'goteira', 'sogra'],
+    anel: '#937462', borda: '#43342b', premio: ['aluguel', 'goteira', 'sogra'],
     parabens: { tit: 'Você saiu da casa alugada!',
       texto: 'Chega de pagar o apê dos outros. Aluguel é dinheiro que vai embora todo mês, e a ADN está aqui para te ajudar a trocar isso por um lar para chamar de seu.' } },
   { id: 'plantao',  nome: 'Plantão de vendas',   sub: 'Hora de conhecer o apê',    monstros: ['juros', 'solteiro', 'sogra'],

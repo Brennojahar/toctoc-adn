@@ -43,7 +43,7 @@ export function inicio(raiz, { ir }) {
 
   p.append(
     img(`fundo-${etapa.id}`, 'inicio-fundo'),
-    el('header', { class: 'topo' }, [botaoSom(), img('logo-adn-branco', 'topo-logo'), el('span', { class: 'chip', text: `★ Recorde ${s.recorde}` })]),
+    el('header', { class: 'topo topo-capa' }, [botaoSom(), img('logo-adn-branco', 'topo-logo'), el('span', { class: 'chip', text: `★ Recorde ${s.recorde}` })]),
     el('div', { class: 'logo', 'aria-label': 'Toc Toc, Adeneco!' }, [el('b', { text: 'Toc Toc,' }), el('b', { text: 'Adeneco!' })]),
     herois,
     el('div', { class: 'botoes' }, [
