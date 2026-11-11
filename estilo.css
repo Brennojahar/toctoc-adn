@@ -192,25 +192,23 @@ img { -webkit-user-drag: none; user-select: none; }
 }
 
 /* ---------- início ---------- */
-.inicio { display: flex; flex-direction: column; background: #7cc6ef; }
-.inicio-fundo {
-  position: fixed;
-  inset: 0;
-  z-index: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center top;
-}
-.inicio::before {
-  content: "";
-  position: fixed;
-  inset: 0;
+.inicio { --capa-fundo: var(--azul-escuro); display: flex; flex-direction: column; background: var(--capa-fundo); }
+/* A cena da capa (a/capa.webp, 900 × 1612): o 3D da piscina com o trio dentro. A caixa vai do topo até logo abaixo
+   dos pés do trio (70% da altura da imagem); a imagem continua por baixo dos botões e some na cor da página. */
+.capa-cena { width: 100%; aspect-ratio: 900 / 1128; }
+.capa-img { position: absolute; z-index: 0; top: 0; left: 0; display: block; width: 100%; height: auto; }
+.capa-veu {
+  position: absolute;
   z-index: 1;
+  top: 0;
+  left: 0;
+  width: 100%;
+  aspect-ratio: 900 / 1620; /* um fio mais alto que a imagem, para a borda de baixo dela não aparecer */
   pointer-events: none;
-  background: linear-gradient(180deg, rgba(0, 30, 69, .25) 0%, rgba(0, 30, 69, 0) 26%, rgba(0, 30, 69, 0) 55%, rgba(0, 30, 69, .45) 100%);
+  background: linear-gradient(180deg, rgba(0, 30, 69, .42) 0%, rgba(0, 30, 69, 0) 24%, rgba(0, 30, 69, 0) 66%, var(--capa-fundo) 94%);
 }
-.inicio > :not(.inicio-fundo):not(.veu) { position: relative; z-index: 2; }
+.capa-cena > .topo, .capa-cena > .logo, .capa-cena > .fitas { position: relative; z-index: 2; }
+.inicio > :not(.veu) { position: relative; z-index: 2; }
 /* a página rola: nenhum bloco encolhe para caber na altura da tela */
 .inicio > *, .rapida > * { flex-shrink: 0; }
 
@@ -251,32 +249,18 @@ img { -webkit-user-drag: none; user-select: none; }
 .topo-capa { display: grid; grid-template-columns: 1fr auto 1fr; }
 .topo-capa > :first-child { justify-self: start; }
 .topo-capa > :last-child { justify-self: end; }
+/* em celular estreito (360 px), o recorde não quebra em duas linhas */
+.topo-capa .chip { white-space: nowrap; }
 
-/* trio da capa: Adeneco de pé, Tijolo e Gaia sentados; cada um abre o próprio card */
+/* trio da capa: a caixa que ele ocupa na imagem (x 6%, largura 88%; do 47% da cena para baixo). Cada um abre o próprio card */
 .herois {
-  position: relative;
-  width: min(330px, 88%);
-  aspect-ratio: 900 / 654;
-  margin: 8px auto 0;
-}
-.herois-img {
-  position: relative;
-  z-index: 1;
-  display: block;
-  width: 100%;
-  transform-origin: 50% 100%;
-  animation: respira 3.4s ease-in-out infinite;
-}
-.herois-sombra {
   position: absolute;
-  left: 4%;
-  right: 4%;
-  bottom: -4%;
-  height: 14%;
-  border-radius: 50%;
-  background: radial-gradient(closest-side, rgba(20, 12, 4, .45), rgba(20, 12, 4, 0));
+  z-index: 3;
+  left: 5.99%;
+  top: 46.98%;
+  width: 88.02%;
+  aspect-ratio: 900 / 654;
 }
-@keyframes respira { 0%, 100% { transform: scale(1, 1); } 50% { transform: scale(1.012, .988); } }
 /* brilhinho na chave do Tijolo */
 .brilho-chave {
   position: absolute;
@@ -304,6 +288,7 @@ img { -webkit-user-drag: none; user-select: none; }
 
 .botoes { display: flex; flex-direction: column; gap: 12px; padding: 26px 18px 0; }
 .dupla { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.dupla .btn { padding: 0 10px; }
 
 .elenco { margin: 18px 16px calc(var(--base) + 24px); padding: 16px; }
 .elenco > b { display: block; font-size: 16px; font-weight: 900; }
@@ -1145,17 +1130,20 @@ img { -webkit-user-drag: none; user-select: none; }
 .res-chip { margin-top: -4px; }
 
 /* linha de prêmio no card de cada etapa da jornada */
+/* em cima o rótulo (e o "Ver prêmio" à direita); embaixo, a fileira das figurinhas */
 .etapa-premio {
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr auto;
   align-items: center;
-  gap: 8px;
+  gap: 4px 8px;
   padding: 8px 10px;
   border-radius: 14px;
   background: #fff8e1;
 }
 .etapa-premio > small { color: #9a6a00; font-size: 11px; font-weight: 900; letter-spacing: .04em; text-transform: uppercase; }
-.etapa-premio-figs { display: flex; flex: 1; align-items: center; gap: 2px; }
-.etapa-premio-figs img { width: 40px; height: 40px; object-fit: contain; }
+.etapa-premio-figs { grid-column: 1 / -1; grid-row: 2; display: flex; flex-wrap: wrap; align-items: center; gap: 2px; }
+.etapa-premio-figs img { width: 38px; height: 38px; object-fit: contain; }
+.etapa-premio-figs b { margin-right: 6px; }
 .etapa-premio-figs b { font-size: 13px; font-weight: 900; color: var(--azul-noite); }
 .etapa-premio img.apagada, .fig-mini.apagada img { filter: grayscale(1) brightness(1.05); opacity: .45; }
 .etapa-premio.ganho { background: #e7f6ee; }
@@ -1215,9 +1203,9 @@ img { -webkit-user-drag: none; user-select: none; }
   background: linear-gradient(180deg, #fff7da, #fff1c2);
 }
 .premio-tit { color: #8a5c00; font-size: 12px; font-weight: 900; letter-spacing: .04em; text-transform: uppercase; }
-.figs { display: flex; justify-content: center; gap: 4px; }
+.figs { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px; }
 .fig {
-  width: 32%;
+  width: calc((100% - 8px) / 3);
   max-width: 120px;
   border-radius: 18px;
   -webkit-tap-highlight-color: transparent;

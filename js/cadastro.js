@@ -2,7 +2,7 @@
 // escolhe o monstrinho que mais atrapalha e responde perguntas de um toque. Tudo vai para o banco (supabase/leads.sql).
 // Depois de enviado, o aparelho guarda só o id secreto do cadastro e o primeiro nome (sugerido no ranking).
 // O jogo também conta ao banco o que a pessoa fez: etapas, fases, recorde, partidas e o clique no corretor.
-import { CADASTRO, MONSTROS, etapaDaFase } from './dados.js';
+import { CADASTRO, MONSTROS, cenarioDaFase } from './dados.js';
 import { ler, gravar, faseAtual, idJogador, novoId } from './salvo.js';
 import { chamar } from './banco.js';
 import { efeito } from './som.js';
@@ -103,7 +103,7 @@ export function cadastro(raiz, { ir, depois }) {
   const voltar = botao([], 'redondo', () => (passo > 1 ? mostrar(passo - 1) : ir('#/')), 'Voltar');
   voltar.innerHTML = ICONES.voltar;
   p.append(
-    img(`fundo-${etapaDaFase(faseAtual()).id}`, 'fundo-cheio borrado'),
+    img(`fundo-${cenarioDaFase(faseAtual()).id}`, 'fundo-cheio borrado'),
     el('header', { class: 'topo' }, [voltar, contador]),
     corpo,
   );

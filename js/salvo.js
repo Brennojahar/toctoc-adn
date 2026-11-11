@@ -1,11 +1,29 @@
 import { TOTAL_FASES } from './dados.js';
 
 const CHAVE = 'adn-toctoc';
-// Mudou o número de fases por etapa: progresso de uma versão anterior não vale mais (recorde, som e ajudas ficam).
-const VERSAO = 2;
+// Mudou o desenho da jornada: progresso de uma versão anterior não vale mais (recorde, som e ajudas ficam).
+// A exceção é a versão 2 (6 etapas de 2 fases), que é convertida para a 3 (3 etapas de 2 fases): ver `daVersao2`.
+const VERSAO = 3;
 // `lead`: o cadastro da entrada (js/cadastro.js). `partidas` e `corretor` vão para o cadastro no banco.
 // `indicacoes`: o que a pessoa fez no campo de indicações do prêmio final ({ estado: 'pulou' | 'pendente' | 'enviado', total }).
 const PADRAO = () => ({ versao: VERSAO, fases: {}, premios: {}, codigo: null, recorde: 0, ajudas: { tempo: 2, martelo: 1, ouro: 3 }, som: true, jogador: null, nome: '', lead: null, partidas: 0, corretor: false, utm: null, indicacoes: null });
+
+// Da versão 2 para a 3, cada etapa antiga (2 fases no mesmo cenário) virou uma fase:
+// quem tinha fechado a etapa antiga k já tem a fase k, com a melhor nota das duas.
+// Uma etapa de agora vale como ganha quando as duas fases dela estão feitas.
+function daVersao2(antigo, novo) {
+  const fases = antigo.fases || {};
+  const premios = antigo.premios || {};
+  for (let n = 1; n <= 6; n++) {
+    const a = fases[2 * n - 1];
+    const b = fases[2 * n];
+    if (!a || !b) break; // as fases abrem em ordem
+    novo.fases[n] = Math.max(a, b);
+  }
+  for (let k = 1; k <= 3; k++) {
+    if (novo.fases[2 * k - 1] && novo.fases[2 * k]) novo.premios[k] = premios[2 * k] || premios[2 * k - 1] || Date.now();
+  }
+}
 
 export function ler() {
   const p = PADRAO();
@@ -16,6 +34,7 @@ export function ler() {
       junto.versao = VERSAO;
       junto.fases = {};
       junto.premios = {};
+      if (s.versao === 2) daVersao2(s, junto);
     }
     return junto;
   } catch {

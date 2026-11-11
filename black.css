@@ -1,0 +1,172 @@
+/* Black Friday ADN (11/11/2026): uma camada por cima do estilo.css.
+   Só vale quando o <html> tem a classe "black" (js/black.js liga de 09 a 26/11).
+   Identidade tirada da peça da campanha: azul-noite com brilho azul no centro, letreiro em neon
+   (uma linha cheia, outra só no contorno), fitas amarelas cruzadas e o destaque em mostarda. */
+:root.black {
+  --fundo-pagina: #020f21;
+  --texto-lado: #eef2ff;
+  --mut-lado: #a5b0cc;
+  --noite: #020f21;
+  /* a fonte da peça; no cartão da campanha é a única, em dois pesos (800 e 500) */
+  --black-fonte: 'Montserrat', var(--titulo);
+  --neon: #4db5f5;
+  --neon-forte: #0a84f0;
+  --brilho-neon: 0 0 8px #8fd0ff, 0 0 22px #0a84f0, 0 0 46px #0062c4;
+}
+.black .aparelho { box-shadow: 0 30px 90px rgba(10, 77, 255, .35), inset 0 0 0 2px #16306b; }
+.black .tela { background: var(--noite); }
+.black .carregando {
+  background: radial-gradient(70% 46% at 50% 50%, #0062c4 0%, #023564 48%, var(--noite) 100%);
+  text-shadow: var(--brilho-neon);
+}
+
+/* ---------- capa ---------- */
+/* a cena da capa fica como na versão normal, sem o degradê azul por cima (pedido do Breno em 11/11); só o pé dela some no azul-noite */
+.black .inicio { --capa-fundo: var(--noite); }
+.black .inicio .topo { padding-top: 2px; }
+.black .inicio .redondo, .black .inicio .chip {
+  background: rgba(3, 30, 66, .84);
+  color: #fff;
+  box-shadow: inset 0 0 0 1px rgba(111, 194, 255, .55), 0 0 14px rgba(30, 125, 255, .35);
+}
+
+/* as fitas cruzadas */
+.fitas {
+  height: calc(var(--topo) + 78px);
+  pointer-events: none;
+}
+.inicio > .fitas { z-index: 3; }
+.fita {
+  position: absolute;
+  left: -14%;
+  width: 128%;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  background: var(--mostarda);
+  color: #fff;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, .45);
+}
+.fita.frente { top: calc(var(--topo) + 27px); transform: rotate(-6deg); }
+.fita.tras { top: calc(var(--topo) + 21px); transform: rotate(5deg); background: #856a18; color: rgba(255, 255, 255, .45); box-shadow: none; }
+.fita-corre { display: flex; flex-shrink: 0; animation: fita-corre 40s linear infinite; }
+.fita.tras .fita-corre { animation-duration: 56s; animation-direction: reverse; }
+.fita-corre span { display: flex; align-items: center; flex-shrink: 0; }
+.fita svg { flex-shrink: 0; width: 15px; height: 13px; margin-left: 18px; }
+.fita b { padding-left: 18px; font: 900 13px/1 var(--titulo); letter-spacing: .03em; white-space: nowrap; }
+@keyframes fita-corre { to { transform: translateX(-50%); } }
+
+/* o nome do jogo como o letreiro da peça: "Toc Toc," cheio e "Adeneco!" só no contorno */
+.black .logo b {
+  color: #fff;
+  -webkit-text-stroke: 0;
+  text-shadow: var(--brilho-neon);
+}
+.black .logo b + b {
+  color: #06215a;
+  /* contorno por fora: o preenchimento cobre as emendas internas das letras */
+  -webkit-text-stroke: 4px var(--neon);
+  paint-order: stroke fill;
+  text-shadow: 0 0 10px #0a84f0, 0 0 30px #0062c4;
+}
+.black .topo-logo { filter: none; }
+
+/* botões: o azul acende, o amarelo vira o mostarda da campanha */
+.black .btn.azul {
+  background: linear-gradient(180deg, #2a9df4 0%, #0069ce 100%);
+  box-shadow: 0 5px 0 #023564, 0 0 24px rgba(40, 140, 255, .6);
+}
+.black .btn.azul:active { box-shadow: 0 2px 0 #023564, 0 0 14px rgba(40, 140, 255, .5); }
+.black .btn.amarelo {
+  background: linear-gradient(180deg, #ffc640 0%, var(--mostarda) 100%);
+  box-shadow: 0 5px 0 #a87400, 0 0 20px rgba(247, 173, 0, .35);
+}
+.black .inicio .botoes { padding-top: 18px; }
+.black .inicio .btn.branco {
+  color: #fff;
+  background: rgba(3, 30, 66, .86);
+  box-shadow: inset 0 0 0 1.5px rgba(111, 194, 255, .6), 0 4px 0 var(--noite), 0 0 16px rgba(30, 125, 255, .3);
+}
+
+/* o card dos monstrinhos e dos heróis, em vidro escuro */
+.black .inicio .card {
+  --mut: #a9bbdf;
+  --linha: rgba(120, 170, 255, .28);
+  background: rgba(2, 22, 48, .9);
+  color: #fff;
+  box-shadow: inset 0 0 0 1px rgba(111, 194, 255, .35), 0 10px 30px rgba(0, 0, 0, .4);
+}
+.black .inicio .monstro-bt:active, .black .inicio .especial:active { background: rgba(60, 140, 255, .18); }
+.black .inicio .especial .seta { color: #5d79b8; }
+.black .inicio .menos { color: #ff8a8a !important; }
+.black .inicio .ouro { color: #ffc640 !important; }
+.black .inicio .super { color: #c0adff !important; }
+
+/* ---------- jornada, ranking e figurinhas: o fundo da página escurece, os cards continuam claros para ler ---------- */
+.black .jornada, .black .ranking, .black .album {
+  background: linear-gradient(180deg, #0062c4 0%, #023564 190px, var(--noite) 460px);
+}
+.black .jornada-cab h1 { color: #fff; text-shadow: var(--brilho-neon); }
+.black .jornada-cab p, .black .album-nota, .black .ranking .secao > .nota { color: #a9bbdf; }
+.black .ranking .topo > b, .black .album .topo > b { color: #fff; }
+.black .rapida, .black .cadastro { background: var(--noite); }
+
+/* ---------- o cartão da campanha ---------- */
+.black-card, .black-faixa {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: #fff;
+  font-family: var(--black-fonte);
+  font-weight: 500;
+  text-align: center;
+  /* o mesmo fundo da peça: azul-noite com o brilho azul atrás dos logos */
+  background: radial-gradient(120% 64% at 50% 20%, #0069ce 0%, #024b8d 34%, #021d40 68%, var(--noite) 100%);
+}
+.black-card {
+  gap: 10px;
+  margin: 20px 16px 0;
+  padding: 24px 16px 14px;
+  border-radius: 24px;
+  box-shadow: inset 0 0 0 1px rgba(77, 181, 245, .4), 0 0 30px rgba(10, 132, 240, .3);
+}
+/* o letreiro em cima e o logo da ADN embaixo, centrados */
+.black-letreiro-caixa { display: block; width: 190px; aspect-ratio: 500 / 230; }
+.black-letreiro { display: block; width: 100%; height: 100%; overflow: visible; filter: drop-shadow(0 0 1px #4db5f5) drop-shadow(0 0 6px #0a84f0); }
+.black-logo { display: block; width: 92px; height: auto; margin-top: 4px; }
+.black-data { margin-top: 4px; font: italic 800 26px/1 var(--black-fonte); }
+.black-chamada { font-size: 13.5px; line-height: 1.35; letter-spacing: -.01em; text-wrap: balance; }
+.black-chamada em {
+  display: block;
+  width: fit-content;
+  margin: 7px auto 0;
+  padding: 6px 14px 7px;
+  border-radius: 8px;
+  background: #f7af08;
+  color: #fff;
+  font: 800 19px/1.15 var(--black-fonte);
+  white-space: nowrap;
+}
+.black-card .btn { margin-top: 4px; font-family: var(--black-fonte); font-size: 15px; font-weight: 800; text-decoration: none; }
+.black-cert { display: block; color: rgba(255, 255, 255, .72); font-size: 10.5px; line-height: 1.35; }
+
+/* a campanha junto do desconto do fim da jornada */
+.black-faixa { gap: 7px; padding: 14px 12px 12px; border-radius: 16px; }
+.black-faixa-tit { font: 800 12px/1.2 var(--black-fonte); letter-spacing: .06em; text-transform: uppercase; }
+.black-faixa .black-chamada { font-size: 13.5px; }
+.black-faixa .black-chamada em { font-size: 17px; }
+
+/* painel do lado, no computador */
+.lado-black { margin: 0 0 14px; padding: 12px 14px; border-left: 4px solid var(--mostarda); border-radius: 0 12px 12px 0; background: rgba(20, 60, 160, .28); }
+.lado-black b { display: block; font: 900 15px/1.2 var(--titulo); }
+.lado-black p { margin: 4px 0 6px; font-size: 14px; }
+.lado-black small { display: block; color: var(--mut-lado); font-size: 11px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .fita-corre { animation: none; }
+}
+
+/* na capa, as fitas ocupam o topo: o título encolhe um pouco para não encostar no capacete do Adeneco */
+.black .capa-cena > .fitas { height: calc(var(--topo) + 72px); }
+.black .capa-cena > .logo { margin-top: 0; transform: rotate(-3deg) scale(.88); transform-origin: 50% 0; }

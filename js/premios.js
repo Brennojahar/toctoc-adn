@@ -1,7 +1,8 @@
 // Prêmios da jornada: as figurinhas do WhatsApp de cada etapa, o desconto no fim (depois das indicações), a página de parabéns e o álbum.
-import { ETAPAS, FIGURINHAS, WHATSAPP_CORRETOR, mensagemCorretor, fasesDaEtapa, DESCONTO, MAX_INDICACOES } from './dados.js';
+import { ETAPAS, FIGURINHAS, WHATSAPP_CORRETOR, mensagemCorretor, fasesDaEtapa, cenarioDaFase, DESCONTO, MAX_INDICACOES } from './dados.js';
 import { ler, gravar, codigoPremio } from './salvo.js';
 import { atualizarLead, enviarIndicacoes, mascara, digitos } from './cadastro.js';
+import { BLACK, blackAtiva, faixaBlack } from './black.js';
 import { efeito } from './som.js';
 import { el, img, botao, ICONES } from './util.js';
 
@@ -10,7 +11,7 @@ const mini = (id, classe = '') => img(`figurinhas/${id}-mini`, classe);
 export const TOTAL_FIGURINHAS = Object.keys(FIGURINHAS).length;
 
 export const figurinhasGanhas = (s = ler()) =>
-  ETAPAS.flatMap((et, i) => (s.premios[i + 1] && Array.isArray(et.premio) ? et.premio : []));
+  ETAPAS.flatMap((et, i) => (s.premios[i + 1] ? et.premio : []));
 
 // Os arquivos ficam prontos antes do toque: o iPhone só abre o menu de compartilhar se for chamado na hora do toque.
 const arquivos = new Map();
@@ -67,9 +68,11 @@ function figurinhaBloqueada(id, classe) {
 
 const SEGURE = 'Clique e segure na figurinha e salve no seu telefone.';
 
-function figurinhasDoPremio(ids) {
+// `mais`: as figurinhas vêm depois de outro prêmio (o desconto, na última etapa)
+function figurinhasDoPremio(ids, mais = false) {
+  const quantas = ids.length > 1 ? `${ids.length} figurinhas` : 'uma figurinha';
   return el('div', { class: 'premio-bloco' }, [
-    el('small', { class: 'premio-tit', text: ids.length > 1 ? `Seu prêmio: ${ids.length} figurinhas para o WhatsApp` : 'Seu prêmio: uma figurinha para o WhatsApp' }),
+    el('small', { class: 'premio-tit', text: `${mais ? 'E mais' : 'Seu prêmio'}: ${quantas} para o WhatsApp` }),
     el('div', { class: 'figs' }, ids.map((id, i) => {
       const f = figurinhaSalvavel(id, 'fig');
       f.style.setProperty('--i', i);
@@ -82,7 +85,7 @@ function figurinhasDoPremio(ids) {
 
 function botaoCorretor() {
   const indicados = ler().indicacoes?.total || 0;
-  const href = `https://wa.me/${WHATSAPP_CORRETOR}?text=${encodeURIComponent(mensagemCorretor(codigoPremio(), indicados))}`;
+  const href = `https://wa.me/${WHATSAPP_CORRETOR}?text=${encodeURIComponent(mensagemCorretor(codigoPremio(), indicados) + (blackAtiva() ? BLACK.mensagemPremio : ''))}`;
   const a = el('a', { class: 'btn whats grande bloco pulsa', href, target: '_blank', rel: 'noopener', html: `${ICONES.whatsapp}<span>Falar com um corretor</span>` });
   a.addEventListener('click', () => {
     efeito('confirma');
@@ -181,6 +184,7 @@ function desconto() {
     el('div', { class: 'codigo' }, [el('small', { text: 'Seu código' }), el('b', { text: codigoPremio() })]),
     botaoCorretor(),
     el('small', { class: 'como', text: 'A mensagem já vai pronta: o corretor fica sabendo do seu desconto e explica as condições.' }),
+    blackAtiva() ? faixaBlack() : null,
   ]);
 }
 
@@ -200,11 +204,13 @@ export function parabens(raiz, { ir, k }) {
   const s = ler();
   const et = ETAPAS[k - 1];
   if (!et || !s.premios[k]) return ir('#/jornada');
-  const final = !Array.isArray(et.premio);
+  const final = Boolean(et.desconto);
   const prox = ETAPAS[k];
+  // o fundo é o último cenário da etapa, o da fase que acabou de fechar
+  const cena = cenarioDaFase(fasesDaEtapa(k).at(-1));
   const p = el('div', { class: 'pagina parabens' });
   p.append(
-    img(`fundo-${et.id}`, 'fundo-cheio borrado'),
+    img(`fundo-${cena.id}`, 'fundo-cheio borrado'),
     confete(),
     el('section', { class: 'card parabens-card' }, [
       el('div', { class: 'res-heroi alterna' }, [img('adeneco-festa', 'quadro a'), img('adeneco-aponta', 'quadro b')]),
@@ -212,7 +218,8 @@ export function parabens(raiz, { ir, k }) {
       el('h1', { text: 'Parabéns!' }),
       el('h2', { text: et.parabens.tit }),
       el('p', { class: 'parabens-texto', text: et.parabens.texto }),
-      final ? premioFinal() : figurinhasDoPremio(et.premio),
+      final ? premioFinal() : null,
+      et.premio.length ? figurinhasDoPremio(et.premio, final) : null,
       prox ? botao(`Próxima etapa: ${prox.nome}`, 'btn azul grande bloco', () => ir(`#/jornada/${fasesDaEtapa(k + 1)[0]}`)) : null,
       el('div', { class: 'res-links' }, [
         botao('Minhas figurinhas', 'link', () => ir('#/figurinhas')),
@@ -244,13 +251,6 @@ export function album(raiz, { ir }) {
       el('b', { text: `Etapa ${k} · ${et.nome}` }),
       el('small', { class: tem ? 'mais' : '', text: tem ? 'Ganhou!' : `Conclua a etapa ${k}` }),
     ]);
-    if (!Array.isArray(et.premio)) {
-      lista.append(el('section', { class: 'card album-etapa final' + (tem ? '' : ' fechada') }, [
-        cab,
-        tem ? premioFinal() : el('p', { class: 'album-final', text: `Conclua a jornada inteira para ganhar ${DESCONTO} de desconto no seu apê ADN.` }),
-      ]));
-      return;
-    }
     // ganha: a figurinha de verdade, que dá para segurar e salvar; não ganha: só a silhueta
     const figs = el('div', { class: 'album-figs' }, et.premio.map(id => {
       const f = tem ? figurinhaSalvavel(id, 'fig-mini') : figurinhaBloqueada(id, 'fig-mini');
@@ -261,6 +261,8 @@ export function album(raiz, { ir }) {
       cab,
       figs,
       tem ? botao(et.premio.length > 1 ? 'Baixar estas figurinhas' : 'Baixar esta figurinha', 'btn amarelo bloco', () => baixar(et.premio)) : null,
+      // a última etapa também dá o desconto
+      !et.desconto ? null : tem ? premioFinal() : el('p', { class: 'album-final', text: `Conclua a jornada inteira para ganhar também ${DESCONTO} de desconto no seu apê ADN.` }),
     ]));
   });
   if (ganhas.length) lista.append(el('small', { class: 'como', text: COMO }));
@@ -273,9 +275,10 @@ export function premioDaEtapa(k, ganho, ir) {
   const et = ETAPAS[k - 1];
   return el('div', { class: 'etapa-premio' + (ganho ? ' ganho' : '') }, [
     el('small', { text: ganho ? 'Prêmio ganho' : 'Prêmio' }),
-    el('span', { class: 'etapa-premio-figs' }, Array.isArray(et.premio)
-      ? et.premio.map(id => (ganho ? mini(id) : img(`figurinhas/${id}-bloqueada`, 'bloqueada')))
-      : [el('b', { text: `${DESCONTO} de desconto` })]),
+    el('span', { class: 'etapa-premio-figs' }, [
+      et.desconto ? el('b', { text: `${DESCONTO} de desconto` }) : null,
+      ...et.premio.map(id => (ganho ? mini(id) : img(`figurinhas/${id}-bloqueada`, 'bloqueada'))),
+    ]),
     ganho ? botao('Ver prêmio', 'mini-bt', () => ir(`#/parabens/${k}`)) : null,
   ]);
 }

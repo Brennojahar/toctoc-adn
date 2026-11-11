@@ -1,10 +1,11 @@
 // Telas fora da partida: início, jornada (com a folha "antes da fase"), partida rápida e ranking.
-import { MONSTROS, HEROIS, ETAPAS, FASES_POR_ETAPA, TOTAL_FASES, AJUDAS, configFase, etapaDaFase } from './dados.js';
+import { MONSTROS, HEROIS, ETAPAS, FASES_POR_ETAPA, TOTAL_FASES, AJUDAS, configFase, cenarioDaFase, numEtapa } from './dados.js';
 import { ler, gravar, faseAtual, idJogador } from './salvo.js';
 import { listarRanking, registrarPontos, posicao, formNome } from './ranking.js';
 import { alternarSom, somLigado, efeito } from './som.js';
 import { el, img, botao, ICONES } from './util.js';
 import { figurinhasGanhas, TOTAL_FIGURINHAS, premioDaEtapa } from './premios.js';
+import { blackAtiva, fitas, cartaoBlack } from './black.js';
 
 function voltar(ir, destino) {
   const b = botao([], 'redondo', () => ir(destino), 'Voltar');
@@ -29,23 +30,26 @@ const estrelasTxt = n => '★'.repeat(n) + '☆'.repeat(3 - n);
 export function inicio(raiz, { ir }) {
   const s = ler();
   const n = faseAtual(s);
-  const etapa = etapaDaFase(n);
   const p = el('div', { class: 'pagina inicio' });
 
-  // a foto acompanha a etapa em que o jogador está
-  const herois = el('div', { class: 'herois' }, [
-    el('i', { class: 'herois-sombra' }),
-    img('herois', 'herois-img'),
-    el('i', { class: 'brilho-chave' }),
-  ]);
+  // O trio já vem dentro da cena da capa (a/capa.webp, feita pelo arte/capa.py), com a luz e as sombras do lugar.
+  // Aqui fica só a área de toque de cada um, na mesma caixa que o trio ocupa na imagem, e o brilho da chave.
+  const herois = el('div', { class: 'herois' }, [el('i', { class: 'brilho-chave' })]);
   [['tijolo', 'Conhecer o Tijolo'], ['adeneco', 'Conhecer o Adeneco'], ['gaia', 'Conhecer a Gaia']].forEach(([id, rotulo]) =>
     herois.append(botao([], `toque-heroi ${id}`, () => abrirInfo(p, 'heroi', id), rotulo)));
 
-  p.append(
-    img(`fundo-${etapa.id}`, 'inicio-fundo'),
+  const black = blackAtiva();
+  // A cena da capa: o 3D da piscina do Residencial São Conrado com o trio. É a mesma em qualquer fase.
+  const cena = el('div', { class: 'capa-cena' }, [
+    img('capa', 'capa-img'),
+    el('i', { class: 'capa-veu' }),
+    black && fitas(),
     el('header', { class: 'topo topo-capa' }, [botaoSom(), img('logo-adn-branco', 'topo-logo'), el('span', { class: 'chip', text: `★ Recorde ${s.recorde}` })]),
     el('div', { class: 'logo', 'aria-label': 'Toc Toc, Adeneco!' }, [el('b', { text: 'Toc Toc,' }), el('b', { text: 'Adeneco!' })]),
     herois,
+  ].filter(Boolean));
+  p.append(...[
+    cena,
     el('div', { class: 'botoes' }, [
       botao(`Jogar a jornada · Fase ${n}`, 'btn azul grande bloco pulsa', () => ir(`#/jornada/${n}`)),
       el('div', { class: 'dupla' }, [
@@ -54,6 +58,7 @@ export function inicio(raiz, { ir }) {
       ]),
       botao(`Minhas figurinhas · ${figurinhasGanhas(s).length} de ${TOTAL_FIGURINHAS}`, 'btn amarelo bloco', () => ir('#/figurinhas')),
     ]),
+    black && cartaoBlack(),
     el('section', { class: 'card elenco' }, [
       el('b', { text: 'Acerte os monstrinhos' }),
       el('small', { text: 'Clique e conheça os motivos que te impedem de conquistar os seus sonhos.' }),
@@ -69,7 +74,7 @@ export function inicio(raiz, { ir }) {
         especial(p, 'gaia', 'Gaia, a super rara: puxe pra cima', '"Aprovado." Relógio parado e pontos x3', 'super'),
       ]),
     ]),
-  );
+  ].filter(Boolean));
   raiz.append(p);
 }
 
@@ -133,7 +138,9 @@ export function jornada(raiz, { ir, abrir }) {
       if (f > atual) b.disabled = true;
       return b;
     }));
-    const foto = el('div', { class: 'etapa-foto' }, [img(`fundo-${et.id}`)]);
+    // a foto é o cenário da fase que falta jogar; etapa pronta mostra o último cenário dela
+    const cena = cenarioDaFase(aqui ? atual : completa ? fases[fases.length - 1] : primeira);
+    const foto = el('div', { class: 'etapa-foto' }, [img(`fundo-${cena.id}`)]);
     if (aqui) foto.append(img('adeneco', 'etapa-espia'));
     if (!aberta) foto.append(el('div', { class: 'etapa-tranca', html: `${ICONES.tranca}<span>Complete a etapa ${k}</span>` }));
     const txt = el('div', { class: 'etapa-txt' }, [
@@ -162,7 +169,7 @@ export function jornada(raiz, { ir, abrir }) {
 function abrirAntes(pagina, n, ir) {
   pagina.querySelector('.veu')?.remove();
   const cfg = configFase(n);
-  const et = etapaDaFase(n);
+  const et = cenarioDaFase(n);
   const s = ler();
   const escolhidas = new Set();
   const fechar = () => veu.remove();
@@ -182,7 +189,7 @@ function abrirAntes(pagina, n, ir) {
 
   const folha = el('div', { class: 'folha antes' }, [
     el('i', { class: 'pegador' }),
-    el('span', { class: 'antes-chip', text: `ETAPA ${ETAPAS.indexOf(et) + 1} · ${et.nome.toUpperCase()}` }),
+    el('span', { class: 'antes-chip', text: `ETAPA ${numEtapa(n)} · ${et.nome.toUpperCase()}` }),
     el('b', { class: 'antes-tit', text: `Fase ${n}` }),
     el('div', { class: 'objetivo' }, [img('adeneco'), el('div', {}, [
       el('small', { text: 'Objetivo' }),

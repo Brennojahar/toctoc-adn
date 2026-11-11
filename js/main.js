@@ -5,6 +5,9 @@ import { cadastro, precisaCadastro, guardarOrigem, enviarLead, enviarIndicacoes 
 import { destravar, tocarMusica } from './som.js';
 import { IMG } from './util.js';
 import { MONSTROS, FIGURINHAS } from './dados.js';
+import { ligarBlack } from './black.js';
+
+ligarBlack(); // Black Friday ADN: de 09 a 26/11 o jogo veste o tema da campanha
 
 const tela = document.getElementById('tela');
 let limpar = null;
@@ -63,9 +66,9 @@ enviarIndicacoes(); // e as indicações que ficaram esperando
 
 // carrega as imagens antes de abrir, para nada piscar no meio da partida
 const IMAGENS = [
-  'adeneco', 'adeneco-tonto', 'adeneco-festa', 'adeneco-aponta', 'herois', 'tijolo', 'gaia', 'martelo', 'martelo-esq', 'chave', 'logo-adn-branco',
+  'adeneco', 'adeneco-tonto', 'adeneco-festa', 'adeneco-aponta', 'tijolo', 'gaia', 'martelo', 'martelo-esq', 'chave', 'logo-adn-branco',
   ...Object.keys(MONSTROS).map(id => `m-${id}`),
-  'fundo-casa', 'fundo-plantao', 'fundo-obra', 'fundo-decorado', 'fundo-chaves', 'fundo-festa',
+  'capa', 'fundo-casa', 'fundo-plantao', 'fundo-obra', 'fundo-decorado', 'fundo-chaves', 'fundo-festa',
   ...Object.keys(FIGURINHAS).flatMap(id => [`figurinhas/${id}-mini`, `figurinhas/${id}-bloqueada`]),
 ];
 const cache = [];

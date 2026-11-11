@@ -1,4 +1,4 @@
-// Elenco, etapas da jornada e regras de cada fase.
+// Elenco, cenários, etapas da jornada e regras de cada fase.
 
 // `atrapalha` e `ajuda` aparecem no card de cada monstrinho. Textos de rascunho: a ADN aprova antes de publicar.
 export const MONSTROS = {
@@ -80,35 +80,35 @@ export const HEROIS = {
   },
 };
 
-// A jornada do primeiro apê: 6 etapas, 2 fases em cada.
-// `anel` é a borda do buraco (o chão cortado) e `borda` o tom escuro logo dentro dele.
-// `premio`: as figurinhas que a etapa dá ao ser concluída ('desconto' na última: os R$ 5 mil de desconto, depois das indicações).
-// `parabens`: a página de parabéns da etapa. Textos de rascunho: a ADN aprova antes de publicar.
+// Os 6 cenários da jornada, na ordem: cada fase acontece em um.
+// `monstros`: quem aparece ali. `anel` é a borda do buraco (o chão cortado) e `borda` o tom escuro logo dentro dele.
+export const CENARIOS = [
+  { id: 'casa',     nome: 'Casa alugada',        monstros: ['aluguel', 'goteira'],            anel: '#937462', borda: '#43342b' },
+  { id: 'plantao',  nome: 'Plantão de vendas',   monstros: ['juros', 'solteiro', 'sogra'],    anel: '#e5d2c0', borda: '#6b6259' },
+  { id: 'obra',     nome: 'Canteiro de obras',   monstros: ['juros', 'obra', 'banheiro'],     anel: '#d38653', borda: '#633d24' },
+  { id: 'decorado', nome: 'Apê decorado',        monstros: ['apertado', 'longe', 'banheiro'], anel: '#b8997d', borda: '#554638' },
+  { id: 'chaves',   nome: 'Entrega das chaves',  monstros: ['obra', 'longe', 'apertado', 'cunhado'], anel: '#876e64', borda: '#3d312c' },
+  { id: 'festa',    nome: 'Festa no condomínio', monstros: ['juros', 'aluguel', 'obra', 'longe', 'apertado', 'sogra', 'banheiro', 'solteiro', 'goteira', 'cunhado'], anel: '#dfcab7', borda: '#695e55' },
+];
+
+// A jornada do primeiro apê: 3 etapas, 2 fases em cada (pedido do Breno em 11/11/2026).
+// Eram 6 etapas e 12 fases, muito para chegar ao fim. Cada etapa de agora junta duas das antigas:
+// os dois cenários (um por fase), os monstrinhos e os prêmios delas.
+// `premio`: as figurinhas que a etapa dá ao ser concluída. `desconto`: a etapa também dá os R$ 5 mil (depois das indicações).
+// `parabens`: a página de parabéns da etapa. Nomes e textos de rascunho: a ADN aprova antes de publicar.
 export const ETAPAS = [
-  { id: 'casa',     nome: 'Casa alugada',        sub: 'Onde tudo começa',          monstros: ['aluguel', 'goteira'],
-    anel: '#937462', borda: '#43342b', premio: ['aluguel', 'goteira', 'sogra'],
-    parabens: { tit: 'Você saiu da casa alugada!',
-      texto: 'Chega de pagar o apê dos outros. Aluguel é dinheiro que vai embora todo mês, e a ADN está aqui para te ajudar a trocar isso por um lar para chamar de seu.' } },
-  { id: 'plantao',  nome: 'Plantão de vendas',   sub: 'Hora de conhecer o apê',    monstros: ['juros', 'solteiro', 'sogra'],
-    anel: '#e5d2c0', borda: '#6b6259', premio: ['juros', 'solteiro', 'banheiro'],
-    parabens: { tit: 'Você saiu do plantão de vendas!',
-      texto: 'E agora está rumo à sua nova casa. Com um corretor da ADN do seu lado, cada passo do financiamento fica claro, e o seu sonho sai do plantão já no papel.' } },
-  { id: 'obra',     nome: 'Canteiro de obras',   sub: 'Subindo tijolo por tijolo', monstros: ['juros', 'obra', 'banheiro'],
-    anel: '#d38653', borda: '#633d24', premio: ['tijolo', 'obra', 'cunhado'],
-    parabens: { tit: 'A sua obra começou a todo vapor!',
-      texto: 'Tijolo por tijolo, o seu apê está saindo do chão. A ADN constrói com o selo de qualidade PBQP-H nível A, para a obra andar firme até a entrega.' } },
-  { id: 'decorado', nome: 'Apê decorado',        sub: 'Visita ao decorado',        monstros: ['apertado', 'longe', 'banheiro'],
-    anel: '#b8997d', borda: '#554638', premio: ['gaia', 'apertado', 'longe'],
-    parabens: { tit: 'Você já conhece o seu apê!',
-      texto: 'No decorado dá para ver cada cantinho: planta inteligente, ambientes integrados e varanda gourmet. Agora é só escolher onde vai ficar o sofá.' } },
-  { id: 'chaves',   nome: 'Entrega das chaves',  sub: 'O apê é seu',               monstros: ['obra', 'longe', 'apertado', 'cunhado'],
-    anel: '#876e64', borda: '#3d312c', premio: ['adeneco-festa', 'adeneco-aponta'],
-    parabens: { tit: 'A chave é sua!',
-      texto: 'Esse é o dia que a família inteira espera. A ADN já entregou mais de 8 mil apês, e agora chegou a sua vez de abrir a porta.' } },
-  { id: 'festa',    nome: 'Festa no condomínio', sub: 'Lazer completo',            monstros: ['juros', 'aluguel', 'obra', 'longe', 'apertado', 'sogra', 'banheiro', 'solteiro', 'goteira', 'cunhado'],
-    anel: '#dfcab7', borda: '#695e55', premio: 'desconto',
+  { nome: 'Adeus, aluguel', sub: 'Da casa alugada ao plantão de vendas',
+    premio: ['aluguel', 'goteira', 'sogra', 'juros', 'solteiro', 'banheiro'],
+    parabens: { tit: 'Você deu adeus ao aluguel!',
+      texto: 'Chega de pagar o apê dos outros. Você saiu da casa alugada, passou no plantão de vendas e, com um corretor da ADN do seu lado, o seu primeiro apê já está no papel.' } },
+  { nome: 'Apê a caminho', sub: 'Do canteiro de obras ao decorado',
+    premio: ['tijolo', 'obra', 'cunhado', 'gaia', 'apertado', 'longe'],
+    parabens: { tit: 'O seu apê está saindo do chão!',
+      texto: 'Tijolo por tijolo, a obra anda firme, com o selo de qualidade PBQP-H nível A. E no decorado você já viu cada cantinho: planta inteligente, ambientes integrados e varanda gourmet.' } },
+  { nome: 'Chave na mão', sub: 'Da entrega das chaves à festa no condomínio',
+    premio: ['adeneco-festa', 'adeneco-aponta'], desconto: true,
     parabens: { tit: 'Você concluiu a jornada!',
-      texto: 'Do aluguel até a festa com os vizinhos, você venceu todos os monstrinhos. Agora o prêmio é de verdade: R$ 5 mil de desconto no seu apê ADN.' } },
+      texto: 'Do aluguel até a festa com os vizinhos, você venceu todos os monstrinhos. A chave é sua, e agora o prêmio é de verdade: R$ 5 mil de desconto no seu apê ADN.' } },
 ];
 
 // Figurinhas para o WhatsApp: PNG 1024 × 1024 com fundo transparente em a/figurinhas/<id>.png
@@ -163,20 +163,23 @@ export const MAX_INDICACOES = 3;
 export const FASES_POR_ETAPA = 2;
 export const TOTAL_FASES = ETAPAS.length * FASES_POR_ETAPA;
 
-export const etapaDaFase = n => ETAPAS[Math.min(ETAPAS.length - 1, Math.floor((n - 1) / FASES_POR_ETAPA))];
-// número da etapa (1 a 6) e as fases dela
+// o cenário de cada fase: a fase 1 é o primeiro, a 2 o segundo, e assim até a última
+export const cenarioDaFase = n => CENARIOS[Math.min(CENARIOS.length - 1, Math.max(0, n - 1))];
+// número da etapa (1 a 3) e as fases dela
 export const numEtapa = n => Math.min(ETAPAS.length, Math.floor((n - 1) / FASES_POR_ETAPA) + 1);
 export const fasesDaEtapa = k => Array.from({ length: FASES_POR_ETAPA }, (_, j) => (k - 1) * FASES_POR_ETAPA + j + 1);
 
-// A velocidade vai de 1 a 30 ao longo da jornada; a partida rápida fica no meio (15), com todos os monstrinhos.
+// A velocidade vai de 1 a 30 e a meta de 9 a 20 ao longo da jornada, seja qual for o número de fases:
+// com 6 fases, cada uma tem a velocidade e a meta que as fases pares (2, 4, ... 12) tinham na jornada de 12.
+// A partida rápida fica no meio (15), com todos os monstrinhos.
 export function configFase(n, rapida = false) {
   const nivel = rapida ? 15 : Math.round((n * 30) / TOTAL_FASES);
   return {
     n,
     rapida,
-    meta: rapida ? 0 : 7 + Math.round(n * 1.1),
+    meta: rapida ? 0 : 7 + Math.round((n * 13.2) / TOTAL_FASES),
     tempo: rapida ? 60 : 15,
-    monstros: rapida ? Object.keys(MONSTROS) : [...etapaDaFase(n).monstros],
+    monstros: rapida ? Object.keys(MONSTROS) : [...cenarioDaFase(n).monstros],
     ritmo: Math.max(420, 900 - nivel * 16), // ms entre uma leva de aparições e a próxima
     vivo: Math.max(650, 1300 - nivel * 22), // ms que cada um fica fora do buraco
   };

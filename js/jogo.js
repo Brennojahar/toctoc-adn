@@ -1,5 +1,5 @@
 // A partida: buracos, aparições, marteladas, combo, poderes do Tijolo e da Gaia, fim.
-import { configFase, etapaDaFase, numEtapa, fasesDaEtapa, ETAPAS, COMBOS, estrelas, TOTAL_FASES, AJUDAS } from './dados.js';
+import { configFase, cenarioDaFase, numEtapa, fasesDaEtapa, ETAPAS, CENARIOS, COMBOS, estrelas, TOTAL_FASES, AJUDAS } from './dados.js';
 import { efeito, vibrar, tocarMusica, pararMusica } from './som.js';
 import { ler, gravar } from './salvo.js';
 import { el, img, botao, IMG } from './util.js';
@@ -13,7 +13,7 @@ const multCombo = c => (c >= 10 ? 3 : c >= 5 ? 2 : 1);
 export function partida(raiz, { fase, ajudas = [], ir }) {
   const rapida = fase === 'rapida';
   const cfg = configFase(rapida ? 15 : fase, rapida);
-  const etapa = rapida ? ETAPAS[Math.floor(Math.random() * ETAPAS.length)] : etapaDaFase(cfg.n);
+  const cenario = rapida ? CENARIOS[Math.floor(Math.random() * CENARIOS.length)] : cenarioDaFase(cfg.n);
   const tem = id => ajudas.includes(id);
   const duracao = cfg.tempo + (tem('tempo') ? 5 : 0);
   const limitePressa = rapida ? 10 : 5; // a partir daqui a música acelera e o relógio pisca
@@ -31,8 +31,8 @@ export function partida(raiz, { fase, ajudas = [], ir }) {
 
   // ---------- DOM ----------
   const pagina = el('div', { class: 'pagina partida' });
-  pagina.style.setProperty('--anel', etapa.anel);
-  pagina.style.setProperty('--borda', etapa.borda);
+  pagina.style.setProperty('--anel', cenario.anel);
+  pagina.style.setProperty('--borda', cenario.borda);
   const grade = el('div', { class: 'grade' });
   const celulas = Array.from({ length: 9 }, (_, i) => {
     const c = el('button', { class: 'celula', 'aria-label': `Buraco ${i + 1}`, tabindex: '0' }, [
@@ -46,7 +46,7 @@ export function partida(raiz, { fase, ajudas = [], ir }) {
     return c;
   });
   const mascaras = celulas.map(c => c.querySelector('.mascara'));
-  pagina.append(el('div', { class: 'cena' }, [el('div', { class: 'palco' }, [img(`fundo-${etapa.id}`, 'palco-img'), grade])]));
+  pagina.append(el('div', { class: 'cena' }, [el('div', { class: 'palco' }, [img(`fundo-${cenario.id}`, 'palco-img'), grade])]));
 
   const relogio = el('div', { class: 'relogio' }, [el('b')]);
   const placar = el('div', { class: 'placar' }, [el('small'), el('b')]);
