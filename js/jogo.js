@@ -2,9 +2,10 @@
 import { configFase, cenarioDaFase, numEtapa, fasesDaEtapa, ETAPAS, CENARIOS, COMBOS, estrelas, TOTAL_FASES, AJUDAS } from './dados.js';
 import { efeito, vibrar, tocarMusica, pararMusica } from './som.js';
 import { ler, gravar } from './salvo.js';
-import { el, img, botao, IMG } from './util.js';
+import { el, img, botao, IMG, ICONES } from './util.js';
 import { caixaRanking } from './ranking.js';
 import { atualizarLead } from './cadastro.js';
+import { painel, veuCentro, estrelas as estrelasDoPainel, brilhos, confeteLados, vitoria, contar } from './festa.js';
 
 const CHANCE_ADENECO = 0.28;
 const PAUSA_BONUS = 8000; // ms mínimos entre um cachorro e outro
@@ -221,10 +222,14 @@ export function partida(raiz, { fase, ajudas = [], ir }) {
     pop(i, '+' + ganho);
     efeito('bonk');
     depois(30, () => efeito('monstro'));
-    if (E.combo >= 3) efeito('combo', E.combo);
+    efeito('brilho', E.combo);
     vibrar(15);
     const c = COMBOS[E.combo];
-    if (c) banner(c[0], c[1]);
+    if (c) {
+      banner(c[0], c[1], c[2] || '');
+      efeito('sino', Math.min(3, Math.floor(E.combo / 4)));
+      confeteLados(pagina, E.combo >= 10 ? 30 : 18);
+    }
     animarCombo();
     hud();
     checarMeta();
@@ -309,10 +314,30 @@ export function partida(raiz, { fase, ajudas = [], ir }) {
 
   // na fase, bater a meta não encerra: dá para buscar mais estrelas até o tempo acabar
   let avisouMeta = false;
+  let avisouMeio = false;
   function checarMeta() {
-    if (rapida || avisouMeta || E.acertos < cfg.meta) return;
+    if (rapida || avisouMeta) return;
+    if (E.acertos < cfg.meta) {
+      // no meio do caminho, o selo com o rosto do Adeneco
+      if (!avisouMeio && E.acertos >= Math.ceil(cfg.meta / 2)) {
+        avisouMeio = true;
+        selo('Falta metade!');
+      }
+      return;
+    }
     avisouMeta = true;
-    banner('Meta batida!', 'Continue para ganhar mais estrelas');
+    banner('Meta batida!', 'Continue para ganhar mais estrelas', 'uau');
+    efeito('sino', 3);
+    confeteLados(pagina, 34, 1.1);
+  }
+
+  // o selo do meio da fase: desce, fica um instante e some
+  function selo(texto) {
+    pagina.querySelector('.selo-meio')?.remove();
+    const s = el('div', { class: 'selo-meio' }, [img('adeneco'), el('b', { text: texto })]);
+    pagina.append(s);
+    depois(1750, () => s.remove());
+    efeito('sino', 1);
   }
 
   // A célula sob o dedo: o boneco sai do buraco para cima, então a área de toque sobe junto.
@@ -378,6 +403,7 @@ export function partida(raiz, { fase, ajudas = [], ir }) {
       E.resta -= 1;
       E.segundos += 1;
       if (E.resta === limitePressa) tocarMusica('fase', true);
+      if (rapida && E.resta === Math.floor(duracao / 2)) selo('Metade do tempo!');
       if (E.resta <= 0) return fim();
       hud();
     }, 1000);
@@ -388,15 +414,12 @@ export function partida(raiz, { fase, ajudas = [], ir }) {
     E.pausa = true;
     E.pausaDesde = Date.now();
     pararMusica();
-    const veu = el('div', { class: 'veu' }, [
-      el('div', { class: 'folha pausa' }, [
-        el('i', { class: 'pegador' }),
-        el('b', { text: 'Pausa' }),
-        botao('Continuar', 'btn azul grande bloco', () => { veu.remove(); continuar(); }),
-        botao('Sair da partida', 'btn branco bloco', () => ir(rapida ? '#/rapida' : '#/jornada')),
-      ]),
-    ]);
+    const veu = veuCentro(painel({ faixa: 'Pausa', raios: false, classe: 'pausa' }, [
+      botao('Continuar', 'btn principal grande bloco', () => { veu.remove(); continuar(); }),
+      botao('Sair da partida', 'btn secundario bloco', () => ir(rapida ? '#/rapida' : '#/jornada')),
+    ]));
     pagina.append(veu);
+    efeito('sobe');
   }
   function continuar() {
     const parado = Date.now() - E.pausaDesde;
@@ -460,50 +483,73 @@ export function partida(raiz, { fase, ajudas = [], ir }) {
     s.partidas = (s.partidas || 0) + 1;
     gravar(s);
     atualizarLead();
-    efeito(passou ? 'fanfarra' : 'derrota');
     // o cenário da fase desfoca e some o placar; depois da vinheta entra a música do menu
     pagina.classList.add('acabou');
-    depois(1300, () => tocarMusica('menu'));
+    // a festa completa (vinheta, fogos, raios) é de quem passou de fase ou bateu o recorde na partida rápida
+    const festa = rapida ? recorde : passou;
+    if (!festa) efeito(passou ? 'fanfarra' : 'derrota');
+    depois(festa ? 3300 : 1300, () => tocarMusica('menu'));
 
     const numeros = rapida
       ? [[E.pontos, 'pontos'], [E.acertos, 'monstrinhos'], ['x' + E.melhor, 'melhor combo']]
       : [[`${E.acertos}/${cfg.meta}`, 'monstrinhos'], [E.pontos, 'pontos'], ['x' + E.melhor, 'melhor combo']];
-    const titulo = rapida ? (recorde ? 'Novo recorde!' : 'Fim da partida') : passou ? 'Fase completa!' : 'Quase!';
-    const frase = !passou ? 'Faltou pouco!' : est === 3 || recorde ? 'Você mandou muito bem!' : 'Você mandou bem!';
+    const titulo = rapida ? (recorde ? 'Novo recorde!' : 'Fim da partida') : !passou ? 'Quase!' : est === 3 ? 'Mandou muito bem!' : 'Mandou bem!';
+    const sub = rapida ? (recorde ? 'Você mandou muito bem!' : 'Você mandou bem!')
+      : !passou ? 'Faltou pouco!'
+        : etapaNova ? (etapaNova === ETAPAS.length ? 'Jornada concluída!' : `Etapa ${etapaNova} concluída!`) : 'Fase completa!';
     const botoes = [];
     // fechou a etapa: o botão principal leva para a página de parabéns e o prêmio
-    if (etapaNova) botoes.push(botao('Receber meu prêmio', 'btn amarelo grande bloco pulsa', () => ir(`#/parabens/${etapaNova}`)));
-    else if (!rapida && passou && cfg.n < TOTAL_FASES) botoes.push(botao('Próxima fase', 'btn azul grande bloco pulsa', () => ir(`#/jornada/${cfg.n + 1}`)));
-    botoes.push(botao('Jogar de novo', `btn ${!rapida && passou ? 'branco' : 'azul grande pulsa'} bloco`,
-      () => ir(`#/partida/${rapida ? 'rapida' : cfg.n}?${Date.now()}`)));
+    if (etapaNova) botoes.push(botao('Receber meu prêmio', 'btn principal grande bloco pulsa', () => ir(`#/parabens/${etapaNova}`)));
+    else if (!rapida && passou && cfg.n < TOTAL_FASES) botoes.push(botao('Próxima fase', 'btn principal grande bloco pulsa', () => ir(`#/jornada/${cfg.n + 1}`)));
+    const deNovo = () => ir(`#/partida/${rapida ? 'rapida' : cfg.n}?${Date.now()}`);
+    // quando há um botão principal, "Jogar de novo" vira um link embaixo, como no pop-up da referência
+    if (!botoes.length) botoes.push(botao('Jogar de novo', 'btn principal grande bloco pulsa', deNovo));
     // stop motion: o Adeneco alterna entre os braços para cima e apontando para o jogador
     const heroi = passou
       ? el('div', { class: 'res-heroi alterna' }, [img('adeneco-festa', 'quadro a'), img('adeneco-aponta', 'quadro b')])
       : el('div', { class: 'res-heroi' }, [img('adeneco-tonto', 'quadro')]);
-    const veu = el('div', { class: 'veu' }, [
-      el('div', { class: 'folha resultado' }, [
-        heroi,
-        etapaNova ? el('span', { class: 'chip-ouro res-chip', text: etapaNova === ETAPAS.length ? 'JORNADA CONCLUÍDA!' : `ETAPA ${etapaNova} CONCLUÍDA!` }) : null,
-        el('b', { class: 'res-tit', text: titulo }),
-        el('small', { class: 'res-frase', text: frase }),
-        rapida ? null : el('div', { class: 'res-estrelas' }, [1, 2, 3].map(k => {
-          const e = el('i', { class: k <= est ? 'on' : '', text: '★' });
-          e.style.setProperty('--k', k);
-          return e;
-        })),
-        el('div', { class: 'res-numeros' }, numeros.map(([v, t]) => el('span', {}, [el('b', { text: String(v) }), el('small', { text: t })]))),
-        premio ? el('div', { class: 'premio', text: `3 estrelas! Você ganhou uma ajuda: ${premio}` }) : null,
-        // partida rápida: entra no ranking compartilhado (pede o nome na primeira vez)
-        rapida ? caixaRanking(el('div', { class: 'res-ranking' })) : null,
-        !rapida && !passou ? el('div', { class: 'premio', text: `Faltaram ${cfg.meta - E.acertos} monstrinhos para passar de fase` }) : null,
-        ...botoes,
-        el('div', { class: 'res-links' }, [
-          botao(rapida ? 'Ver ranking' : 'Jornada', 'link', () => ir(rapida ? '#/ranking' : '#/jornada')),
-          botao('Início', 'link', () => ir('#/')),
-        ]),
+    const caixas = numeros.map(([v, t]) => el('span', {}, [el('b', { text: String(v) }), el('small', { text: t })]));
+    const ajuda = premio ? AJUDAS.find(a => a.nome === premio) : null;
+    const pop = painel({
+      faixa: rapida ? 'Partida rápida' : `Fase ${cfg.n}`,
+      aoFechar: () => ir(rapida ? '#/rapida' : '#/jornada'),
+      heroi,
+      raios: festa,
+      foco: rapida ? '22%' : '30%',
+    }, [
+      ...(festa ? brilhos([[8, 26, 1], [84, 40, 0.7], [16, 58, 0.6]]) : []),
+      rapida ? null : estrelasDoPainel(est),
+      el('div', { class: 'txt titulo' + (titulo.length > 12 ? ' longo' : ''), text: titulo }),
+      el('div', { class: 'sub', text: sub }),
+      el('div', { class: 'pop-numeros' }, caixas),
+      ajuda ? el('div', { class: 'ganho' }, [
+        el('span', { class: 'pastilha' }, [ajuda.img === 'relogio' ? el('span', { html: ICONES.relogio }).firstChild : img(ajuda.img)]),
+        el('p', {}, ['3 estrelas! Você ganhou', el('b', { text: ajuda.nome })]),
+      ]) : null,
+      // partida rápida: entra no ranking compartilhado (pede o nome na primeira vez)
+      rapida ? caixaRanking(el('div', { class: 'res-ranking' })) : null,
+      !rapida && !passou ? el('div', { class: 'premio', text: `Faltaram ${cfg.meta - E.acertos} monstrinhos para passar de fase` }) : null,
+      ...botoes,
+      el('div', { class: 'res-links' }, [
+        botoes.length && (etapaNova || (!rapida && passou && cfg.n < TOTAL_FASES)) ? botao('Jogar de novo', 'link', deNovo) : null,
+        botao(rapida ? 'Ver ranking' : 'Jornada', 'link', () => ir(rapida ? '#/ranking' : '#/jornada')),
+        botao('Início', 'link', () => ir('#/')),
       ]),
     ]);
-    depois(500, () => pagina.append(veu));
+
+    // o pop-up: as estrelas caem uma de cada vez, cada uma com a sua nota; depois o prêmio, com o cintilar
+    const abrir = comFundo => {
+      pagina.append(veuCentro(pop, { fundo: comFundo }));
+      efeito('sobe');
+      const pontos = caixas[rapida ? 0 : 1].firstChild;
+      contar(pontos, E.pontos, 700, 250);
+      for (let k = 1; k <= est; k++) depois(330 + k * 300, () => efeito('estrela', k));
+      if (ajuda) depois(1550, () => efeito('cintilar'));
+      else if (festa) depois(rapida ? 500 : 1500, () => efeito('cintilar'));
+    };
+    // passou: antes do pop-up vem a vinheta de vitória (estouro, fogos e o logo do jogo)
+    if (festa) vitoria(pagina, { depois, pronto: () => abrir(false) });
+    else depois(500, () => abrir(true));
   }
 
   hud();

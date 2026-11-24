@@ -194,8 +194,9 @@ export const AJUDAS = [
 ];
 
 export const COMBOS = {
-  3: ['Combo!', '3 seguidos'],
-  5: ['x2 pontos!', '5 seguidos'],
+  3: ['Boa!', '3 seguidos', 'boa'],
+  5: ['Demais!', 'x2 pontos', 'demais'],
+  8: ['Uau!', '8 seguidos', 'uau'],
   10: ['Pegando fogo!', 'x3 pontos'],
   15: ['Imparável!', '15 seguidos'],
   20: ['Lendário!', '20 seguidos'],

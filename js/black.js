@@ -4,6 +4,7 @@
 import { el, img, ICONES } from './util.js';
 import { efeito } from './som.js';
 import { WHATSAPP_CORRETOR } from './dados.js';
+import { natalAtivo } from './natal.js';
 
 export const BLACK = {
   // "09 até 26/11", no horário de Brasília
@@ -23,6 +24,8 @@ const forcar = new URLSearchParams(location.search).get('black');
 export function blackAtiva() {
   if (forcar === '1') return true;
   if (forcar === '0') return false;
+  // enquanto o Natal vale (js/natal.js), a Black Friday fica desligada: um tema de cada vez
+  if (natalAtivo()) return false;
   const agora = Date.now();
   return agora >= Date.parse(BLACK.inicio) && agora <= Date.parse(BLACK.fim);
 }
@@ -82,7 +85,7 @@ function chamada() {
 // O cartão da campanha na capa: as condições e o caminho para o corretor.
 export function cartaoBlack() {
   const href = `https://wa.me/${WHATSAPP_CORRETOR}?text=${encodeURIComponent(BLACK.mensagem)}`;
-  const a = el('a', { class: 'btn azul bloco', href, target: '_blank', rel: 'noopener', html: `${ICONES.whatsapp}<span>Quero saber da Black Friday</span>` });
+  const a = el('a', { class: 'btn principal bloco', href, target: '_blank', rel: 'noopener', html: `${ICONES.whatsapp}<span>Quero saber da Black Friday</span>` });
   a.addEventListener('click', () => efeito('confirma'));
   return el('section', { class: 'black-card', 'aria-label': 'Black Friday ADN' }, [letreiro(), logoAdn(), periodo(), chamada(), a, certificado()]);
 }

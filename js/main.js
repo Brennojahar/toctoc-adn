@@ -6,7 +6,9 @@ import { destravar, tocarMusica } from './som.js';
 import { IMG } from './util.js';
 import { MONSTROS, FIGURINHAS } from './dados.js';
 import { ligarBlack } from './black.js';
+import { ligarNatal, natalAtivo, IMAGENS_NATAL } from './natal.js';
 
+ligarNatal(); // Natal ADN: troca as artes e veste as telas (vem antes de tudo, porque muda as imagens que serão carregadas)
 ligarBlack(); // Black Friday ADN: de 09 a 26/11 o jogo veste o tema da campanha
 
 const tela = document.getElementById('tela');
@@ -68,25 +70,40 @@ enviarIndicacoes(); // e as indicações que ficaram esperando
 const IMAGENS = [
   'adeneco', 'adeneco-tonto', 'adeneco-festa', 'adeneco-aponta', 'tijolo', 'gaia', 'martelo', 'martelo-esq', 'chave', 'logo-adn-branco',
   ...Object.keys(MONSTROS).map(id => `m-${id}`),
-  'capa', 'fundo-casa', 'fundo-plantao', 'fundo-obra', 'fundo-decorado', 'fundo-chaves', 'fundo-festa',
+  ...(natalAtivo() ? IMAGENS_NATAL : []),
+  'capa', 'logo-3d', 'fundo-casa', 'fundo-plantao', 'fundo-obra', 'fundo-decorado', 'fundo-chaves', 'fundo-festa',
   ...Object.keys(FIGURINHAS).flatMap(id => [`figurinhas/${id}-mini`, `figurinhas/${id}-bloqueada`]),
 ];
 const cache = [];
+let prontas = 0;
 const carregar = nome => new Promise(ok => {
   const i = new Image();
   i.onload = i.onerror = () => (i.decode ? i.decode().catch(() => {}).then(ok) : ok());
   i.src = IMG(nome);
   cache.push(i);
+}).then(() => {
+  prontas += 1;
+  barra.style.setProperty('--p', `${Math.round(6 + 94 * prontas / IMAGENS.length)}%`);
 });
 
+// A capa de carregamento: a arte nova, o logo do jogo em 3D e a barra, que anda conforme as imagens chegam.
+// Ela fica pelo menos 2,2 s na tela, para dar tempo de ver; se a internet estiver lenta, o jogo abre em 6 s de qualquer jeito.
+const TEMPO_DA_CAPA = 2200;
 const capa = document.createElement('div');
 capa.className = 'carregando';
-capa.textContent = 'Toc toc…';
+capa.innerHTML = `<img class="carga-fundo" src="${IMG('capa-loading')}" alt=""><i class="carga-veu"></i>
+  <img class="carga-logo" src="${IMG('logo-3d')}" alt="Toc Toc, Adeneco!">
+  <div class="carga-rodape"><div class="txt">Carregando…</div><div class="barra"><i><b></b></i></div></div>
+  <img class="carga-adn" src="${IMG('logo-adn-branco')}" alt="ADN Construtora">`;
+const barra = capa.querySelector('.barra b');
 tela.append(capa);
-Promise.race([Promise.all(IMAGENS.map(carregar)), new Promise(ok => setTimeout(ok, 6000))]).then(() => {
+const espera = ms => new Promise(ok => setTimeout(ok, ms));
+Promise.all([Promise.race([Promise.all(IMAGENS.map(carregar)), espera(6000)]), espera(TEMPO_DA_CAPA)]).then(() => {
+  barra.style.setProperty('--p', '100%');
   render();
   tela.append(capa);
-  void capa.offsetWidth;
-  capa.style.opacity = '0';
-  setTimeout(() => capa.remove(), 320);
+  setTimeout(() => {
+    capa.style.opacity = '0';
+    setTimeout(() => capa.remove(), 420);
+  }, 260);
 });

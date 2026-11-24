@@ -1,6 +1,9 @@
 import { efeito } from './som.js';
 
-export const IMG = nome => `a/${nome}.webp`;
+// Troca de arte por época (js/natal.js): o nome da imagem aponta para outro arquivo dentro de a/.
+const TROCAS = {};
+export function trocarImagens(mapa) { Object.assign(TROCAS, mapa); }
+export const IMG = nome => `a/${TROCAS[nome] || nome}.webp`;
 
 export function el(tag, props = {}, filhos = []) {
   const e = document.createElement(tag);
@@ -24,16 +27,21 @@ export function img(nome, classe = '') {
   return i;
 }
 
-// Todo botão faz barulho: os de ação principal (azul) confirmam, os outros dão um clique.
+// Todo botão faz barulho: os de ação principal confirmam, os outros dão um clique.
 export function botao(conteudo, classe, fn, rotulo) {
   const b = el('button', { class: classe, 'aria-label': rotulo });
   if (typeof conteudo === 'string') b.textContent = conteudo;
   else b.append(...[].concat(conteudo));
   b.addEventListener('click', ev => {
-    efeito(/\b(azul|amarelo)\b/.test(b.className) ? 'confirma' : 'clique');
+    efeito(/\bprincipal\b/.test(b.className) ? 'confirma' : 'clique');
     fn(ev);
   });
   return b;
+}
+
+// Contador com a moeda de estrela na frente (recorde, estrelas da jornada, figurinhas).
+export function chip(texto) {
+  return el('span', { class: 'chip' }, [el('i', { class: 'moeda', html: '<svg viewBox="0 0 24 24"><path d="M12 2.5l2.9 6 6.6.9-4.8 4.6 1.2 6.5L12 17.4l-5.9 3.1 1.2-6.5L2.500 9.400l6.600-.900z" fill="#fff7c2" stroke="#8a4a00" stroke-width="1.6" stroke-linejoin="round"/></svg>' }), el('b', { text: texto })]);
 }
 
 export const ICONES = {

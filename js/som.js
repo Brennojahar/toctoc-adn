@@ -120,6 +120,13 @@ function latido(t, alt = 1) {
   ruido(t, 0.09, 0.35, 900 * alt, 'bandpass', mestre, 2);
 }
 
+// Um sino: a nota e dois parciais agudos que somem antes dela.
+function sino(f, t, dur, vol) {
+  tom(f, t, dur, 'sine', vol);
+  tom(f * 2.76, t, dur * 0.55, 'sine', vol * 0.35);
+  tom(f * 5.4, t, dur * 0.25, 'sine', vol * 0.15);
+}
+
 export function efeito(nome, n = 0) {
   if (!ligado) return;
   const a = audio();
@@ -198,6 +205,68 @@ export function efeito(nome, n = 0) {
       break;
     case 'fanfarra':
       [523, 659, 784, 1047].forEach((f, i) => tom(f, t + i * 0.11, i === 3 ? 0.5 : 0.14, 'square', 0.09));
+      break;
+    // ---------- sons do visual novo (publicado em 24/11/2026), medidos nas gravações de referência ----------
+    case 'brilho': {
+      // o brilho agudo logo depois da batida; sobe um pouco a cada acerto seguido
+      const base = 1568 * 1.04 ** Math.min(n, 16);
+      tom(base, t + 0.05, 0.16, 'sine', 0.07);
+      tom(base * 1.5, t + 0.1, 0.22, 'sine', 0.05);
+      tom(base * 2, t + 0.15, 0.28, 'triangle', 0.022);
+      break;
+    }
+    case 'sino': {
+      // o sino comprido das palavras de incentivo e do selo do meio da fase
+      const f = [784, 988, 1175, 1319][Math.min(n, 3)];
+      sino(f, t, 0.9, 0.11);
+      sino(f * 1.5, t + 0.11, 1.0, 0.08);
+      break;
+    }
+    case 'vitoria': {
+      // estouro grave e, logo depois, a fanfarra de uns 3 s com as notas subindo e o brilho por cima
+      tom(120, t, 0.55, 'sine', 0.5, 34);
+      tom(70, t, 0.4, 'triangle', 0.3, 30);
+      ruido(t, 0.3, 0.7, 380, 'lowpass');
+      ruido(t, 0.06, 0.5, 2600);
+      const f0 = t + 0.34;
+      [[523, 0], [659, 0.13], [784, 0.26], [1047, 0.39], [784, 0.56], [1047, 0.69], [1319, 0.82]].forEach(([f, d]) => {
+        tom(f, f0 + d, 0.16, 'square', 0.065);
+        tom(f / 2, f0 + d, 0.16, 'triangle', 0.08);
+      });
+      [1047, 1319, 1568, 2093].forEach(f => tom(f, f0 + 1.0, 1.5, 'triangle', 0.055));
+      [523, 784].forEach(f => tom(f, f0 + 1.0, 1.5, 'square', 0.035));
+      [2093, 2637, 3136, 3520, 4186].forEach((f, i) => tom(f, f0 + 1.15 + i * 0.09, 0.4, 'sine', 0.032));
+      break;
+    }
+    case 'fogo':
+      // fogo de artifício: assobio curto, estalo e o chiado das faíscas
+      tom(700, t, 0.2, 'sine', 0.025, 1900);
+      ruido(t + 0.18, 0.09, 0.32, 1400, 'bandpass', mestre, 1.2);
+      tom(160, t + 0.18, 0.18, 'sine', 0.12, 60);
+      for (let i = 0; i < 7; i++) ruido(t + 0.26 + Math.random() * 0.5, 0.04, 0.08, 6500, 'highpass');
+      break;
+    case 'cintilar':
+      // o cintilar bem agudo de quando o prêmio aparece
+      for (let i = 0; i < 12; i++) tom(3000 + Math.random() * 4500, t + i * 0.07 + Math.random() * 0.03, 0.22, 'sine', 0.026);
+      ruido(t, 0.45, 0.03, 8500, 'highpass');
+      break;
+    case 'estrela': {
+      // cada estrela que cai no pop-up: uma nota de sino, mais alta a cada uma
+      const f = [1319, 1568, 2093][Math.min(Math.max(n, 1), 3) - 1];
+      sino(f, t, 0.7, 0.1);
+      tom(f * 2, t + 0.06, 0.3, 'sine', 0.04);
+      ruido(t, 0.03, 0.2, 5000, 'highpass');
+      break;
+    }
+    case 'moeda':
+      // tilintar curto: figurinha ou prêmio entrando
+      tom(1976, t, 0.09, 'sine', 0.08);
+      tom(2637, t + 0.07, 0.3, 'sine', 0.07);
+      break;
+    case 'sobe':
+      // o pop-up entrando
+      tom(260, t, 0.22, 'sine', 0.06, 780);
+      ruido(t, 0.18, 0.1, 1800);
       break;
     case 'derrota':
       [392, 370, 349, 330].forEach((f, i) => tom(f, t + i * 0.18, i === 3 ? 0.5 : 0.16, 'square', 0.07));

@@ -144,7 +144,7 @@ export function cadastro(raiz, { ir, depois }) {
     const erro = el('small', { class: 'cad-erro', role: 'alert' });
     const form = el('form', { class: 'cad-form', novalidate: '' }, [
       nome, whats, email, cidade, privacidade, novidades, erro,
-      el('button', { class: 'btn azul grande bloco', type: 'submit', text: 'Continuar' }),
+      el('button', { class: 'btn principal grande bloco', type: 'submit', text: 'Continuar' }),
     ]);
     const entrada = rotulo => rotulo.querySelector('input, select');
     entrada(whats).addEventListener('input', ev => { ev.target.value = mascara(ev.target.value); });
@@ -242,7 +242,7 @@ export function cadastro(raiz, { ir, depois }) {
       });
       return bloco;
     });
-    const entrar = botao('Começar a jogar', 'btn azul grande bloco pulsa', () => {
+    const entrar = botao('Começar a jogar', 'btn principal grande bloco pulsa', () => {
       const faltam = blocos.filter(b => !r[b.dataset.chave]);
       if (faltam.length) {
         faltam.forEach(b => b.classList.add('falta'));

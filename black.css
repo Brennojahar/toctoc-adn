@@ -24,11 +24,6 @@
 /* a cena da capa fica como na versão normal, sem o degradê azul por cima (pedido do Breno em 11/11); só o pé dela some no azul-noite */
 .black .inicio { --capa-fundo: var(--noite); }
 .black .inicio .topo { padding-top: 2px; }
-.black .inicio .redondo, .black .inicio .chip {
-  background: rgba(3, 30, 66, .84);
-  color: #fff;
-  box-shadow: inset 0 0 0 1px rgba(111, 194, 255, .55), 0 0 14px rgba(30, 125, 255, .35);
-}
 
 /* as fitas cruzadas */
 .fitas {
@@ -57,37 +52,9 @@
 .fita b { padding-left: 18px; font: 900 13px/1 var(--titulo); letter-spacing: .03em; white-space: nowrap; }
 @keyframes fita-corre { to { transform: translateX(-50%); } }
 
-/* o nome do jogo como o letreiro da peça: "Toc Toc," cheio e "Adeneco!" só no contorno */
-.black .logo b {
-  color: #fff;
-  -webkit-text-stroke: 0;
-  text-shadow: var(--brilho-neon);
-}
-.black .logo b + b {
-  color: #06215a;
-  /* contorno por fora: o preenchimento cobre as emendas internas das letras */
-  -webkit-text-stroke: 4px var(--neon);
-  paint-order: stroke fill;
-  text-shadow: 0 0 10px #0a84f0, 0 0 30px #0062c4;
-}
 .black .topo-logo { filter: none; }
 
-/* botões: o azul acende, o amarelo vira o mostarda da campanha */
-.black .btn.azul {
-  background: linear-gradient(180deg, #2a9df4 0%, #0069ce 100%);
-  box-shadow: 0 5px 0 #023564, 0 0 24px rgba(40, 140, 255, .6);
-}
-.black .btn.azul:active { box-shadow: 0 2px 0 #023564, 0 0 14px rgba(40, 140, 255, .5); }
-.black .btn.amarelo {
-  background: linear-gradient(180deg, #ffc640 0%, var(--mostarda) 100%);
-  box-shadow: 0 5px 0 #a87400, 0 0 20px rgba(247, 173, 0, .35);
-}
 .black .inicio .botoes { padding-top: 18px; }
-.black .inicio .btn.branco {
-  color: #fff;
-  background: rgba(3, 30, 66, .86);
-  box-shadow: inset 0 0 0 1.5px rgba(111, 194, 255, .6), 0 4px 0 var(--noite), 0 0 16px rgba(30, 125, 255, .3);
-}
 
 /* o card dos monstrinhos e dos heróis, em vidro escuro */
 .black .inicio .card {
@@ -167,6 +134,5 @@
   .fita-corre { animation: none; }
 }
 
-/* na capa, as fitas ocupam o topo: o título encolhe um pouco para não encostar no capacete do Adeneco */
+/* TESTE DO VISUAL NOVO (18/11/2026): os botões, os redondos, o contador e o logo do jogo passam a vir do visual.css. */
 .black .capa-cena > .fitas { height: calc(var(--topo) + 72px); }
-.black .capa-cena > .logo { margin-top: 0; transform: rotate(-3deg) scale(.88); transform-origin: 50% 0; }

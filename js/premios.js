@@ -4,7 +4,8 @@ import { ler, gravar, codigoPremio } from './salvo.js';
 import { atualizarLead, enviarIndicacoes, mascara, digitos } from './cadastro.js';
 import { BLACK, blackAtiva, faixaBlack } from './black.js';
 import { efeito } from './som.js';
-import { el, img, botao, ICONES } from './util.js';
+import { el, img, botao, chip, ICONES } from './util.js';
+import { painel, veuCentro, brilhos } from './festa.js';
 
 const PNG = id => `a/figurinhas/${id}.png`;
 const mini = (id, classe = '') => img(`figurinhas/${id}-mini`, classe);
@@ -124,7 +125,7 @@ function indicacoes(pronto) {
   }
   const form = el('form', { class: 'ind-form', novalidate: '' }, [
     linhas, mais, erro,
-    el('button', { class: 'btn amarelo grande bloco', type: 'submit', text: 'Indicar e ver meu desconto' }),
+    el('button', { class: 'btn principal grande bloco', type: 'submit', text: 'Indicar e ver meu desconto' }),
   ]);
   form.addEventListener('input', () => {
     erro.textContent = '';
@@ -220,7 +221,7 @@ export function parabens(raiz, { ir, k }) {
       el('p', { class: 'parabens-texto', text: et.parabens.texto }),
       final ? premioFinal() : null,
       et.premio.length ? figurinhasDoPremio(et.premio, final) : null,
-      prox ? botao(`Próxima etapa: ${prox.nome}`, 'btn azul grande bloco', () => ir(`#/jornada/${fasesDaEtapa(k + 1)[0]}`)) : null,
+      prox ? botao(`Próxima etapa: ${prox.nome}`, 'btn principal grande bloco', () => ir(`#/jornada/${fasesDaEtapa(k + 1)[0]}`)) : null,
       el('div', { class: 'res-links' }, [
         botao('Minhas figurinhas', 'link', () => ir('#/figurinhas')),
         botao('Início', 'link', () => ir('#/')),
@@ -229,6 +230,31 @@ export function parabens(raiz, { ir, k }) {
   );
   raiz.append(p);
   efeito('premio');
+
+  // O pop-up do prêmio (visual novo): as figurinhas entram uma de cada vez por cima dos raios de luz.
+  // "Pegar figurinhas" fecha o pop-up e mostra a página, onde dá para segurar e salvar cada uma.
+  const fechar = () => veu.remove();
+  const quantas = et.premio.length > 1 ? `${et.premio.length} figurinhas` : 'uma figurinha';
+  const figs = el('div', { class: 'pop-figs' }, et.premio.map((id, i) => {
+    const f = mini(id);
+    f.style.setProperty('--i', i);
+    return f;
+  }));
+  const pop = painel({ faixa: final ? 'Jornada' : `Etapa ${k}`, aoFechar: fechar, foco: final ? '46%' : '56%' }, [
+    ...brilhos([[7, 30, 1], [86, 42, 0.75], [15, 66, 0.6]]),
+    el('div', { class: 'txt titulo', text: 'Parabéns!' }),
+    el('div', { class: 'sub', text: et.parabens.tit }),
+    final ? el('div', { class: 'txt pop-desconto', html: `${DESCONTO}<small>de desconto no seu apê ADN</small>` }) : null,
+    figs,
+    el('div', { class: 'pop-mais', text: final ? `e mais ${quantas} para o WhatsApp` : `${quantas} para o WhatsApp` }),
+    botao(final ? 'Ver meu desconto' : 'Pegar figurinhas', 'btn principal grande bloco pulsa', fechar),
+    prox ? el('div', { class: 'res-links' }, [botao('Próxima etapa', 'link', () => ir(`#/jornada/${fasesDaEtapa(k + 1)[0]}`))]) : null,
+  ]);
+  const veu = veuCentro(pop, { aoFundo: fechar });
+  p.append(veu);
+  const t1 = setTimeout(() => efeito('cintilar'), 450);
+  const tiques = et.premio.map((_, i) => setTimeout(() => efeito('moeda'), 520 + i * 160));
+  return () => [t1, ...tiques].forEach(clearTimeout);
 }
 
 // ---------- álbum: todas as figurinhas, ganhas e por ganhar ----------
@@ -240,7 +266,7 @@ export function album(raiz, { ir }) {
   voltar.innerHTML = ICONES.voltar;
   const p = el('div', { class: 'pagina album' });
   p.append(
-    el('header', { class: 'topo' }, [voltar, el('b', { text: 'Minhas figurinhas' }), el('span', { class: 'chip', text: `${ganhas.length} de ${TOTAL_FIGURINHAS}` })]),
+    el('header', { class: 'topo' }, [voltar, el('b', { text: 'Minhas figurinhas' }), chip(`${ganhas.length} de ${TOTAL_FIGURINHAS}`)]),
     el('p', { class: 'nota album-nota', text: `Conclua as etapas da jornada para ganhar figurinhas do Toc Toc para usar no WhatsApp. ${ganhas.length ? SEGURE : ''}` }),
   );
   const lista = el('div', { class: 'secao' });
@@ -260,7 +286,7 @@ export function album(raiz, { ir }) {
     lista.append(el('section', { class: 'card album-etapa' + (tem ? '' : ' fechada') }, [
       cab,
       figs,
-      tem ? botao(et.premio.length > 1 ? 'Baixar estas figurinhas' : 'Baixar esta figurinha', 'btn amarelo bloco', () => baixar(et.premio)) : null,
+      tem ? botao(et.premio.length > 1 ? 'Baixar estas figurinhas' : 'Baixar esta figurinha', 'btn principal bloco', () => baixar(et.premio)) : null,
       // a última etapa também dá o desconto
       !et.desconto ? null : tem ? premioFinal() : el('p', { class: 'album-final', text: `Conclua a jornada inteira para ganhar também ${DESCONTO} de desconto no seu apê ADN.` }),
     ]));

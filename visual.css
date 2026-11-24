@@ -1,0 +1,442 @@
+/* Visual novo (feito em teste em 18/11/2026, publicado em 24/11): uma camada por cima do estilo.css e do black.css.
+   Vem das referências que o Breno mandou (arte/refs/visual-ref/NOTAS.md, na pasta do jogo) e da prévia que ele aprovou
+   (arte/previa-visual). A marca da ADN continua: azul, amarelo, personagens e logo. Mudam o volume, a luz e o acabamento:
+   botões gordos com aro dourado, painéis azuis com faixa de título, logo do jogo em 3D e as animações de fase e de vitória. */
+:root {
+  --jogo: 'Fredoka', 'Inter', system-ui, sans-serif;
+  --titulo: var(--jogo);
+  --ouro-1: #fff3a6;
+  --ouro-2: #ffc928;
+  --ouro-3: #e58a00;
+  --ouro-base: #7a4300;
+  --tinta: #06245c;
+}
+
+/* texto de jogo: claro, gordo, com contorno escuro e um degrau para baixo */
+.txt {
+  font-family: var(--jogo);
+  font-weight: 700;
+  color: #fff;
+  -webkit-text-stroke: 6px var(--tinta);
+  paint-order: stroke fill;
+  text-shadow: 0 3px 0 var(--tinta);
+  letter-spacing: .01em;
+}
+
+/* ---------- botões: aro dourado, corpo em degradê, brilho em cima, degrau embaixo ---------- */
+.btn {
+  --corpo: linear-gradient(180deg, #4cc3ff 0%, #1487e0 52%, #005fc0 100%);
+  --fio: #003b86;
+  --degrau: #004aa0;
+  --tinta-bt: #06245c;
+  position: relative;
+  isolation: isolate;
+  min-height: 56px;
+  padding: 7px 20px 12px;
+  border-radius: 20px;
+  background: linear-gradient(180deg, var(--ouro-1) 0%, var(--ouro-2) 45%, var(--ouro-3) 100%);
+  box-shadow: 0 6px 0 var(--ouro-base), 0 11px 16px rgba(0, 12, 40, .4);
+  color: #fff;
+  font-family: var(--jogo);
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1.05;
+  letter-spacing: .01em;
+  text-align: center;
+  text-wrap: balance;
+  text-decoration: none;
+  -webkit-text-stroke: 4.5px var(--tinta-bt);
+  paint-order: stroke fill;
+  text-shadow: 0 2.5px 0 var(--tinta-bt);
+}
+.btn::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: 4.5px;
+  border-radius: 15.5px;
+  background: var(--corpo);
+  box-shadow: inset 0 0 0 2px var(--fio), inset 0 -6px 0 var(--degrau);
+}
+.btn::after {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  left: 10px;
+  right: 10px;
+  top: 8px;
+  height: 38%;
+  border-radius: 11px 11px 16px 16px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, .55), rgba(255, 255, 255, .08));
+  pointer-events: none;
+}
+.btn:active { transform: translateY(4px); box-shadow: 0 2px 0 var(--ouro-base), 0 5px 9px rgba(0, 12, 40, .35); }
+.btn.principal { --corpo: linear-gradient(180deg, #ffe55a 0%, #ffd200 50%, #ffb600 100%); --fio: #b86a00; --degrau: #e08a00; --tinta-bt: #7a3c00; }
+.btn.secundario { color: #fff; }
+.btn.whats { --corpo: linear-gradient(180deg, #7dea4a 0%, #2fc21f 52%, #159a12 100%); --fio: #0b5a0c; --degrau: #0f7a10; --tinta-bt: #0b4a10; background: linear-gradient(180deg, var(--ouro-1) 0%, var(--ouro-2) 45%, var(--ouro-3) 100%); box-shadow: 0 6px 0 var(--ouro-base), 0 11px 16px rgba(0, 12, 40, .4); }
+.btn.whats:active { box-shadow: 0 2px 0 var(--ouro-base), 0 5px 9px rgba(0, 12, 40, .35); }
+.btn.grande { min-height: 68px; border-radius: 24px; font-size: 24px; }
+.btn.grande::before { border-radius: 19.5px; }
+.btn svg { flex-shrink: 0; filter: drop-shadow(0 2px 0 rgba(0, 0, 0, .3)); }
+.dupla .btn { padding-left: 8px; padding-right: 8px; font-size: 18px; }
+.nome-linha .btn { min-height: 50px; font-size: 17px; }
+.black-card .btn { font-family: var(--jogo); font-size: 18px; font-weight: 700; }
+.inicio .btn.grande { min-height: 76px; border-radius: 26px; font-size: 29px; }
+.inicio .btn.grande::before { border-radius: 21.5px; }
+/* a bolinha vermelha com o contador, no canto do botão */
+.badge {
+  position: absolute;
+  z-index: 2;
+  right: -6px;
+  top: -9px;
+  display: grid;
+  place-items: center;
+  min-width: 30px;
+  height: 30px;
+  padding: 0 7px;
+  border-radius: 15px;
+  background: linear-gradient(180deg, #ff6b5e, #e01f2d);
+  box-shadow: inset 0 0 0 2px #fff, 0 3px 0 #8a0612;
+  color: #fff;
+  font: 700 16px/1 var(--jogo);
+  font-style: normal;
+  -webkit-text-stroke: 0;
+  text-shadow: 0 1px 0 #8a0612;
+}
+.link { font-family: var(--jogo); font-size: 15.5px; font-weight: 600; }
+
+/* botão redondo (som, voltar, pausa) e o de fechar, vermelho */
+.redondo {
+  --corpo: linear-gradient(180deg, #4cc3ff, #0b6fd0);
+  --fio: #003b86;
+  --degrau: #004aa0;
+  position: relative;
+  isolation: isolate;
+  width: 46px;
+  height: 46px;
+  background: linear-gradient(180deg, var(--ouro-1), var(--ouro-3));
+  box-shadow: 0 4px 0 var(--ouro-base), 0 8px 12px rgba(0, 12, 40, .4);
+  color: #fff;
+  font: 700 19px/1 var(--jogo);
+}
+.redondo::before { content: ""; position: absolute; z-index: -1; inset: 4px; border-radius: 50%; background: var(--corpo); box-shadow: inset 0 0 0 2px var(--fio), inset 0 -4px 0 var(--degrau); }
+.redondo::after { content: ""; position: absolute; z-index: -1; left: 9px; right: 9px; top: 6px; height: 38%; border-radius: 50%; background: linear-gradient(180deg, rgba(255, 255, 255, .6), rgba(255, 255, 255, 0)); pointer-events: none; }
+.redondo svg { filter: drop-shadow(0 2px 0 rgba(0, 0, 0, .35)); }
+.redondo:active { transform: translateY(3px); box-shadow: 0 1px 0 var(--ouro-base), 0 4px 8px rgba(0, 12, 40, .35); }
+.redondo.fechar { position: absolute; }
+.redondo.fechar, .redondo.painel-x { --corpo: linear-gradient(180deg, #ff6b5e, #e01f2d); --fio: #8a0612; --degrau: #b10f1e; }
+.hud .redondo { width: 42px; height: 42px; background: linear-gradient(180deg, var(--ouro-1), var(--ouro-3)); box-shadow: 0 3px 0 #021a4a; }
+
+/* contador (recorde, estrelas): pastilha azul com fio dourado e a moeda de estrela */
+.chip {
+  gap: 7px;
+  height: 38px;
+  padding: 0 14px 0 5px;
+  border-radius: 20px;
+  background: linear-gradient(180deg, #0f4fb8, #06307e);
+  box-shadow: inset 0 0 0 2.5px var(--ouro-2), inset 0 5px 0 rgba(255, 255, 255, .18), 0 4px 0 #021a4a, 0 8px 12px rgba(0, 12, 40, .4);
+  color: #fff;
+  font-family: var(--jogo);
+  font-size: 16px;
+  font-weight: 700;
+  white-space: nowrap;
+  text-shadow: 0 2px 0 #021a4a;
+}
+.chip b { font-weight: 700; }
+.chip:not(:has(.moeda)) { padding-left: 14px; }
+.moeda { display: grid; place-items: center; width: 28px; height: 28px; flex-shrink: 0; border-radius: 50%; background: radial-gradient(circle at 35% 30%, #fff6b0, #ffc928 55%, #e58a00); box-shadow: inset 0 0 0 2px #b86a00, inset 0 -3px 0 #d98200; }
+.moeda svg { width: 16px; height: 16px; }
+
+/* ---------- capa de carregamento ---------- */
+.carregando { display: block; overflow: hidden; background: #3d9be6; transition: opacity .4s; }
+.carga-fundo { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center 60%; }
+.carga-veu { position: absolute; inset: auto 0 0 0; height: 34%; background: linear-gradient(180deg, rgba(0, 30, 69, 0), rgba(0, 30, 69, .82)); }
+.carga-logo {
+  position: absolute;
+  left: 50%;
+  top: calc(var(--topo) + 6.5%);
+  width: 88%;
+  max-width: 400px;
+  translate: -50% 0;
+  filter: drop-shadow(0 12px 14px rgba(0, 30, 80, .45));
+  animation: logo-entra .7s var(--mola) both, flutua 3.2s ease-in-out .8s infinite;
+}
+@keyframes logo-entra { from { opacity: 0; scale: .3; rotate: -10deg; } }
+@keyframes flutua { 0%, 100% { transform: translateY(0) rotate(0); } 50% { transform: translateY(-7px) rotate(-1.2deg); } }
+.carga-rodape { position: absolute; left: 34px; right: 34px; bottom: calc(var(--base) + 56px); text-align: center; }
+.carga-rodape .txt { font-size: 26px; }
+.barra { margin-top: 14px; height: 30px; padding: 4px; border-radius: 16px; background: linear-gradient(180deg, var(--ouro-1), var(--ouro-3)); box-shadow: 0 5px 0 #5a3200, 0 8px 14px rgba(0, 0, 0, .4); }
+.barra i { display: block; height: 100%; overflow: hidden; border-radius: 12px; background: #062a6a; box-shadow: inset 0 3px 0 rgba(0, 0, 0, .35); }
+.barra b { display: block; width: var(--p, 6%); height: 100%; border-radius: 12px; background: linear-gradient(180deg, #ffe55a, #ffd200 50%, #ffb000); box-shadow: inset 0 4px 0 rgba(255, 255, 255, .55); transition: width .35s ease-out; }
+.carga-adn { position: absolute; left: 50%; bottom: calc(var(--base) + 16px); width: 58px; translate: -50% 0; opacity: .92; }
+
+/* ---------- tela inicial ---------- */
+/* o logo do jogo em 3D (a/logo-3d.webp), solto por cima do céu da capa */
+.logo3d {
+  position: absolute !important;
+  z-index: 2;
+  left: 50%;
+  top: calc(var(--topo) + 60px);
+  width: 76%;
+  max-width: 310px;
+  translate: -50% 0;
+  filter: drop-shadow(0 10px 12px rgba(0, 30, 80, .45));
+  pointer-events: none;
+  animation: logo-entra .7s var(--mola) both, flutua 3.2s ease-in-out .8s infinite;
+}
+.inicio .botoes { gap: 17px; padding-top: 22px; }
+.inicio .dupla { gap: 12px; }
+.topo-capa .redondo { width: 48px; height: 48px; }
+/* Black Friday: as fitas ocupam o topo, então o logo desce e encolhe */
+.black .inicio .topo { padding-top: 0; }
+.black .logo3d { top: calc(var(--topo) + 110px); width: 52%; }
+
+/* ---------- painel e pop-up: azul da ADN com aro dourado grosso ---------- */
+.veu.centro {
+  flex-direction: column;
+  align-items: stretch;
+  overflow-y: auto;
+  padding: calc(var(--topo) + 22px) 20px calc(var(--base) + 26px);
+  background: rgba(0, 12, 34, .84);
+}
+.veu.centro::-webkit-scrollbar { display: none; }
+.partida.acabou .veu.centro { background: rgba(0, 12, 34, .84); }
+.veu.centro.sem-fundo, .partida.acabou .veu.centro.sem-fundo { background: transparent; animation: none; }
+.popup { position: relative; width: 100%; max-width: 360px; margin: auto; animation: popup-entra .5s var(--mola) both; }
+@keyframes popup-entra { from { opacity: 0; transform: translateY(40px) scale(.7); } }
+.popup.com-heroi { padding-top: 150px; }
+.popup > .res-heroi { position: absolute; z-index: 2; left: 50%; top: 0; width: 176px; height: 178px; margin: 0 0 0 -88px; filter: drop-shadow(0 8px 10px rgba(0, 0, 0, .4)); animation: heroi-pula .6s .15s var(--mola) both; }
+@keyframes heroi-pula { from { opacity: 0; transform: translateY(70px) scale(.5); } }
+.painel {
+  position: relative;
+  padding: 9px;
+  border-radius: 38px;
+  background: linear-gradient(180deg, var(--ouro-1) 0%, var(--ouro-2) 40%, var(--ouro-3) 100%);
+  box-shadow: 0 10px 0 #5a3200, 0 22px 40px rgba(0, 0, 0, .55);
+}
+.painel-dentro {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  overflow: hidden;
+  padding: 52px 18px 22px;
+  border-radius: 30px;
+  background: linear-gradient(180deg, #1c8ef0 0%, #0063c8 46%, #003f96 100%);
+  box-shadow: inset 0 0 0 3px #00306d, inset 0 6px 0 rgba(255, 255, 255, .22);
+  color: #fff;
+  text-align: center;
+}
+.painel-dentro > :not(.raios):not(.clarao):not(.brilho) { position: relative; }
+.raios {
+  position: absolute;
+  left: 50%;
+  top: var(--foco, 30%);
+  width: 640px;
+  height: 640px;
+  margin: -320px;
+  border-radius: 50%;
+  background: repeating-conic-gradient(from 6deg, rgba(120, 220, 255, .34) 0 9deg, rgba(120, 220, 255, 0) 9deg 22.5deg);
+  -webkit-mask: radial-gradient(circle, #000 0, #000 22%, transparent 62%);
+  mask: radial-gradient(circle, #000 0, #000 22%, transparent 62%);
+  pointer-events: none;
+  animation: gira 26s linear infinite;
+}
+@keyframes gira { to { rotate: 360deg; } }
+.clarao { position: absolute; left: 50%; top: var(--foco, 30%); width: 300px; height: 300px; margin: -150px; border-radius: 50%; background: radial-gradient(circle, rgba(170, 235, 255, .75), rgba(60, 170, 255, 0) 68%); pointer-events: none; }
+.brilho {
+  position: absolute;
+  width: 22px;
+  height: 22px;
+  background: #fff;
+  clip-path: polygon(50% 0, 60% 40%, 100% 50%, 60% 60%, 50% 100%, 40% 60%, 0 50%, 40% 40%);
+  filter: drop-shadow(0 0 6px #9fe6ff);
+  pointer-events: none;
+  animation: pisca 1.8s ease-in-out infinite;
+}
+@keyframes pisca { 0%, 100% { opacity: .15; transform: scale(.4) rotate(0); } 50% { opacity: 1; transform: scale(1) rotate(45deg); } }
+/* o título do pop-up numa faixa que vaza para fora do painel, por cima */
+.faixa {
+  position: absolute;
+  z-index: 3;
+  left: 50%;
+  top: -26px;
+  min-width: 210px;
+  max-width: 92%;
+  height: 66px;
+  padding: 6px;
+  border-radius: 24px;
+  background: linear-gradient(180deg, var(--ouro-1), var(--ouro-2) 45%, var(--ouro-3));
+  box-shadow: 0 6px 0 #5a3200, 0 10px 16px rgba(0, 0, 0, .35);
+  translate: -50% 0;
+}
+.faixa div { display: grid; place-items: center; height: 100%; padding: 0 22px; border-radius: 19px; background: linear-gradient(180deg, #53c8ff, #1487e0 55%, #0a6ad0); box-shadow: inset 0 0 0 2px #003b86, inset 0 5px 0 rgba(255, 255, 255, .35), inset 0 -5px 0 #0a58b4; white-space: nowrap; }
+.faixa .txt { font-size: 28px; line-height: 1; }
+.painel-x { position: absolute !important; z-index: 4; right: -10px; top: 26px; width: 48px; height: 48px; }
+.popup.com-heroi .painel-x { top: 34px; }
+.painel-x svg { width: 24px; height: 24px; }
+
+.estrelas { display: flex; justify-content: center; align-items: flex-end; gap: 4px; margin-top: 2px; }
+.estrela { position: relative; width: 72px; height: 72px; }
+.estrela:nth-child(2) { width: 94px; height: 94px; margin-bottom: 10px; }
+.estrela svg { position: absolute; inset: 0; width: 100%; height: 100%; filter: drop-shadow(0 5px 0 rgba(0, 20, 70, .55)); }
+.estrela .ouro { animation: estrela-entra .55s var(--mola) both, estrela-pulsa 1.4s ease-in-out infinite; animation-delay: calc(.25s + var(--k) * .3s), calc(1.6s + var(--k) * .2s); }
+@keyframes estrela-entra { from { opacity: 0; transform: scale(2.6) rotate(-50deg); } }
+.titulo { font-size: 40px; line-height: 1; text-wrap: balance; }
+.titulo.longo { font-size: 33px; }
+.sub { margin-top: -4px; font: 600 18px/1.2 var(--jogo); color: #d8efff; text-shadow: 0 2px 0 #003b86; text-wrap: balance; }
+.pop-numeros { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 2px 0 4px; }
+.pop-numeros span { padding: 9px 4px 8px; border-radius: 16px; background: rgba(0, 30, 90, .55); box-shadow: inset 0 0 0 2px rgba(120, 200, 255, .45), inset 0 4px 0 rgba(0, 0, 0, .2); }
+.pop-numeros b { display: block; font: 700 24px/1 var(--jogo); color: #ffe55a; text-shadow: 0 2px 0 #06245c; }
+.pop-numeros small { display: block; margin-top: 4px; font: 600 11px/1 var(--jogo); color: #bfe3ff; text-transform: uppercase; letter-spacing: .04em; }
+/* o que a pessoa ganhou: pastilha com o ícone e o texto ao lado */
+.ganho { display: flex; align-items: center; justify-content: center; gap: 10px; animation: ganho-entra .5s 1.5s var(--mola) both; }
+@keyframes ganho-entra { from { opacity: 0; transform: scale(.4); } }
+.pastilha { position: relative; isolation: isolate; display: grid; place-items: center; width: 60px; height: 60px; flex-shrink: 0; border-radius: 18px; background: linear-gradient(180deg, var(--ouro-1), var(--ouro-3)); box-shadow: 0 5px 0 #5a3200; }
+.pastilha::before { content: ""; position: absolute; z-index: -1; inset: 4px; border-radius: 14px; background: linear-gradient(180deg, #7dea4a, #1fa81a); box-shadow: inset 0 0 0 2px #0b5a0c, inset 0 5px 0 rgba(255, 255, 255, .4); }
+.pastilha img, .pastilha svg { width: 44px; height: 44px; object-fit: contain; filter: drop-shadow(0 2px 0 rgba(0, 0, 0, .3)); }
+.ganho p { text-align: left; font: 600 15px/1.2 var(--jogo); color: #fff; text-shadow: 0 2px 0 #003b86; }
+.ganho p b { display: block; font-size: 19px; color: #ffe55a; }
+.painel .link { padding: 6px 8px; color: #d8efff; font-size: 16px; white-space: nowrap; text-decoration: underline; text-underline-offset: 4px; text-shadow: 0 2px 0 #003b86; }
+.painel .res-links { flex-wrap: wrap; gap: 0 8px; margin-top: -4px; }
+.painel .premio { background: rgba(0, 30, 90, .55); color: #fff; font: 600 15px/1.25 var(--jogo); box-shadow: inset 0 0 0 2px rgba(120, 200, 255, .45); }
+/* dentro do painel azul, o que precisa de leitura (o nome no ranking) fica num cartão claro */
+.painel .res-ranking { padding: 10px; border-radius: 18px; background: #fff; color: var(--texto); }
+.painel .res-ranking .form-nome { padding: 4px; border: 0; }
+/* figurinhas do prêmio: entram uma de cada vez por cima dos raios */
+.pop-figs { display: flex; flex-wrap: wrap; justify-content: center; gap: 0 2px; margin: 2px 0 0; }
+.pop-figs img { width: 31%; max-width: 104px; filter: drop-shadow(0 7px 8px rgba(0, 20, 70, .5)); animation: fig-entra .55s var(--mola) both; animation-delay: calc(.45s + var(--i) * .16s); }
+.pop-figs img:nth-child(3n + 1) { rotate: -8deg; translate: 6px 6px; }
+.pop-figs img:nth-child(3n) { rotate: 8deg; translate: -6px 6px; }
+.pop-figs img:nth-child(n + 4) { margin-top: -12px; }
+.pop-mais { font: 700 20px/1.15 var(--jogo); color: #ffe55a; -webkit-text-stroke: 4px var(--tinta); paint-order: stroke fill; text-wrap: balance; }
+.pop-desconto { font-size: 46px; line-height: .95; color: #ffe55a; -webkit-text-stroke-width: 7px; }
+.pop-desconto small { display: block; margin-top: 6px; font-size: 21px; color: #fff; -webkit-text-stroke-width: 4.5px; }
+
+/* ---------- vinheta de vitória: estouro, fogos e o logo do jogo crescendo ---------- */
+.vit { position: fixed; inset: 0; z-index: 55; overflow: hidden; }
+.vit.fundo { pointer-events: none; }
+.vit-escuro { position: absolute; inset: 0; background: rgba(0, 12, 34, .84); animation: veu .35s ease-out both; }
+.vit-raios {
+  position: absolute;
+  left: 50%;
+  top: 42%;
+  width: 760px;
+  height: 760px;
+  margin: -380px;
+  border-radius: 50%;
+  background: repeating-conic-gradient(from 0deg, rgba(255, 220, 90, .32) 0 8deg, rgba(255, 220, 90, 0) 8deg 20deg);
+  -webkit-mask: radial-gradient(circle, #000 0, #000 18%, transparent 60%);
+  mask: radial-gradient(circle, #000 0, #000 18%, transparent 60%);
+  animation: vit-raios 2.15s linear both;
+}
+@keyframes vit-raios { 0% { opacity: 0; rotate: 0deg; scale: .3; } 15% { opacity: 1; scale: 1; } 85% { opacity: 1; } 100% { opacity: 0; rotate: 70deg; } }
+.vit-logo {
+  position: absolute;
+  left: 50%;
+  top: 42%;
+  width: 86%;
+  max-width: 350px;
+  translate: -50% -50%;
+  filter: drop-shadow(0 14px 18px rgba(0, 0, 0, .5));
+  animation: vit-logo 2.15s both;
+}
+@keyframes vit-logo {
+  0% { opacity: 0; scale: .1; rotate: -16deg; }
+  13% { opacity: 1; scale: 1.16; rotate: 4deg; }
+  21% { scale: .95; rotate: -2deg; }
+  29% { scale: 1.02; rotate: 0deg; }
+  36%, 84% { opacity: 1; scale: 1; rotate: 0deg; }
+  100% { opacity: 0; scale: .45; rotate: 0deg; translate: -50% -110%; }
+}
+.fogo { position: absolute; width: 0; height: 0; }
+.fogo::before { content: ""; position: absolute; left: -46px; top: -46px; width: 92px; height: 92px; border-radius: 50%; background: radial-gradient(circle, #fff, var(--c) 30%, transparent 68%); animation: fogo-clarao .5s ease-out both; }
+.fogo i { position: absolute; left: -4px; top: -4px; width: 8px; height: 8px; border-radius: 50%; background: var(--c); box-shadow: 0 0 8px var(--c); animation: fogo-voa 1.05s cubic-bezier(.1, .7, .3, 1) both; }
+@keyframes fogo-voa {
+  0% { transform: rotate(var(--a)) translateY(0) scale(1.2); opacity: 1; }
+  65% { opacity: 1; }
+  100% { transform: rotate(var(--a)) translateY(calc(var(--d) * -1)) scale(.25); opacity: 0; }
+}
+@keyframes fogo-clarao { 0% { opacity: 1; transform: scale(.1); } 100% { opacity: 0; transform: scale(1.3); } }
+/* confete que sai das laterais (o movimento é feito no js/festa.js) */
+.conf-lado { position: absolute; inset: 0; z-index: 56; overflow: hidden; pointer-events: none; }
+.conf-lado i { position: absolute; width: 9px; height: 14px; border-radius: 2px; }
+
+/* ---------- partida ---------- */
+.hud {
+  padding: 9px 12px 10px;
+  background: linear-gradient(180deg, #1c8ef0, #0058c0);
+  box-shadow: inset 0 0 0 3px var(--ouro-2), inset 0 8px 0 rgba(255, 255, 255, .16), 0 5px 0 #021a4a, 0 10px 16px rgba(0, 12, 40, .35);
+  color: #fff;
+}
+.relogio { --cor: #ffd200; background: radial-gradient(closest-side, #06307e 74%, transparent 76%), conic-gradient(var(--cor) calc(var(--p) * 360deg), rgba(0, 20, 70, .6) 0); }
+.relogio b { font: 700 15px/1 var(--jogo); color: #fff; }
+.relogio.pressa { --cor: #ff5d4d; }
+.relogio.parado { --cor: #b99bff; }
+.relogio.parado b { color: #e4d9ff; }
+.placar small, .combo small { color: #bfe3ff; font-family: var(--jogo); font-weight: 600; }
+.placar b { color: #fff; font-weight: 700; text-shadow: 0 2px 0 #021a4a; }
+.placar em { color: #bfe3ff; }
+.combo { background: rgba(0, 30, 90, .55); box-shadow: inset 0 0 0 2px rgba(120, 200, 255, .45); }
+.combo b { font-weight: 700; }
+.combo.quente { background: linear-gradient(180deg, #ffe55a, #ffb600); box-shadow: inset 0 0 0 2px #b86a00; color: #5a2c00; }
+.combo.quente small { color: #7a3c00; }
+.combo.fogo { color: #fff; box-shadow: inset 0 0 0 2px #8a1c00, 0 0 16px rgba(255, 120, 40, .7); }
+.medidor { border: 2.5px solid var(--ouro-2); background: rgba(0, 30, 90, .82); box-shadow: 0 3px 0 #021a4a; height: 24px; }
+.medidor small { line-height: 19px; color: #fff; font-family: var(--jogo); font-weight: 600; text-shadow: 0 1px 0 #021a4a; }
+.estado { font-family: var(--jogo); font-weight: 600; font-size: 13px; box-shadow: inset 0 0 0 2px rgba(255, 255, 255, .45), 0 3px 0 rgba(0, 12, 40, .5); }
+.conta b { color: #ffe55a; -webkit-text-stroke: 10px var(--tinta); text-shadow: 0 8px 0 var(--tinta); }
+.conta small { font-family: var(--jogo); font-weight: 600; font-size: 17px; }
+.pop { font-weight: 700; -webkit-text-stroke: 5px var(--tinta); text-shadow: 0 3px 0 var(--tinta); }
+.pop.ruim { color: #ff8f85; -webkit-text-stroke-color: #6e0f0f; }
+.pop.bom { color: #ffe55a; -webkit-text-stroke-color: #7a3c00; }
+.puxe { font-family: var(--jogo); font-weight: 700; box-shadow: inset 0 0 0 2px #b86a00, 0 4px 0 rgba(90, 50, 0, .5); }
+/* palavras de incentivo: sobem a cada sequência de acertos */
+.banner b { font-weight: 700; -webkit-text-stroke: 8px var(--tinta); text-shadow: 0 5px 0 var(--tinta), 0 12px 22px rgba(0, 20, 60, .45); }
+.banner.boa b { color: #8dff5a; }
+.banner.demais b { color: #6fd6ff; }
+.banner.uau b { color: #ffe55a; }
+.banner small { font-family: var(--jogo); font-weight: 600; font-size: 14px; background: rgba(0, 20, 60, .86); box-shadow: inset 0 0 0 2px rgba(120, 200, 255, .4); }
+/* o selo do meio da fase, com o rosto do Adeneco */
+.selo-meio {
+  position: absolute;
+  z-index: 7;
+  top: calc(var(--topo) + 158px);
+  left: 50%;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 46px;
+  margin-left: -105px;
+  width: 210px;
+  justify-content: center;
+  padding: 0 14px 0 4px;
+  border-radius: 24px;
+  background: linear-gradient(180deg, #7dea4a, #1fa81a);
+  box-shadow: inset 0 0 0 2.5px #0b5a0c, inset 0 5px 0 rgba(255, 255, 255, .4), 0 4px 0 #0b4a10, 0 10px 16px rgba(0, 20, 60, .35);
+  white-space: nowrap;
+  pointer-events: none;
+  animation: selo 1.75s both;
+}
+.selo-meio img { width: 40px; height: 40px; flex-shrink: 0; object-fit: cover; object-position: 50% 8%; border-radius: 50%; background: #dff3ff; box-shadow: 0 0 0 2.5px #fff; }
+.selo-meio b { font: 700 18px/1 var(--jogo); color: #fff; -webkit-text-stroke: 4px #0b4a10; paint-order: stroke fill; }
+@keyframes selo {
+  0% { opacity: 0; transform: translateY(-34px) scale(.5); }
+  11% { opacity: 1; transform: translateY(0) scale(1.1); }
+  17% { transform: scale(1); }
+  84% { opacity: 1; transform: none; }
+  100% { opacity: 0; transform: translateY(-16px); }
+}
+
+/* ---------- folhas brancas (antes da fase, cards): seguem claras para ler, com as peças novas ---------- */
+.antes-tit, .info-tit, .res-tit, .jornada-cab h1, .rapida-card h1, .cad-card h1, .parabens-card h1, .parabens-card h2, .premio-grande, .codigo b, .recorde b { font-weight: 700; }
+.ajuda em { top: -8px; right: -5px; min-width: 26px; height: 26px; border-radius: 13px; background: linear-gradient(180deg, #ff6b5e, #e01f2d); box-shadow: inset 0 0 0 2px #fff, 0 3px 0 #8a0612; font-family: var(--jogo); font-size: 14px; font-weight: 700; }
+.ajuda.on em { background: linear-gradient(180deg, #7dea4a, #1fa81a); box-shadow: inset 0 0 0 2px #fff, 0 3px 0 #0b4a10; }
+.chip-ouro { font-family: var(--jogo); font-size: 12.5px; font-weight: 700; box-shadow: inset 0 0 0 2px #b86a00, 0 3px 0 rgba(120, 70, 0, .45); }
+.mini-bt { font-family: var(--jogo); font-weight: 700; font-size: 13px; box-shadow: inset 0 0 0 2px #b86a00, 0 3px 0 var(--ouro-base); }
+.pip { font-family: var(--jogo); font-weight: 600; }
+
+@media (prefers-reduced-motion: reduce) {
+  .logo3d, .carga-logo, .raios, .brilho, .estrela .ouro, .vit-raios { animation: none; }
+  .conf-lado, .fogo { display: none; }
+}

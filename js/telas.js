@@ -3,7 +3,7 @@ import { MONSTROS, HEROIS, ETAPAS, FASES_POR_ETAPA, TOTAL_FASES, AJUDAS, configF
 import { ler, gravar, faseAtual, idJogador } from './salvo.js';
 import { listarRanking, registrarPontos, posicao, formNome } from './ranking.js';
 import { alternarSom, somLigado, efeito } from './som.js';
-import { el, img, botao, ICONES } from './util.js';
+import { el, img, botao, chip, ICONES } from './util.js';
 import { figurinhasGanhas, TOTAL_FIGURINHAS, premioDaEtapa } from './premios.js';
 import { blackAtiva, fitas, cartaoBlack } from './black.js';
 
@@ -39,24 +39,30 @@ export function inicio(raiz, { ir }) {
     herois.append(botao([], `toque-heroi ${id}`, () => abrirInfo(p, 'heroi', id), rotulo)));
 
   const black = blackAtiva();
+  // o logo do jogo em 3D (a/logo-3d.webp) no lugar do título escrito
+  const logo3d = img('logo-3d', 'logo3d');
+  logo3d.alt = 'Toc Toc, Adeneco!';
+  const ganhas = figurinhasGanhas(s).length;
   // A cena da capa: o 3D da piscina do Residencial São Conrado com o trio. É a mesma em qualquer fase.
   const cena = el('div', { class: 'capa-cena' }, [
     img('capa', 'capa-img'),
     el('i', { class: 'capa-veu' }),
     black && fitas(),
-    el('header', { class: 'topo topo-capa' }, [botaoSom(), img('logo-adn-branco', 'topo-logo'), el('span', { class: 'chip', text: `★ Recorde ${s.recorde}` })]),
-    el('div', { class: 'logo', 'aria-label': 'Toc Toc, Adeneco!' }, [el('b', { text: 'Toc Toc,' }), el('b', { text: 'Adeneco!' })]),
+    el('header', { class: 'topo topo-capa' }, [botaoSom(), img('logo-adn-branco', 'topo-logo'), chip(`Recorde ${s.recorde}`)]),
+    logo3d,
     herois,
   ].filter(Boolean));
   p.append(...[
     cena,
     el('div', { class: 'botoes' }, [
-      botao(`Jogar a jornada · Fase ${n}`, 'btn azul grande bloco pulsa', () => ir(`#/jornada/${n}`)),
+      botao(`Jogar · Fase ${n}`, 'btn principal grande bloco pulsa', () => ir(`#/jornada/${n}`), `Jogar a jornada, fase ${n}`),
       el('div', { class: 'dupla' }, [
-        botao('Partida rápida', 'btn branco', () => ir('#/rapida')),
-        botao('Ranking', 'btn branco', () => ir('#/ranking')),
+        botao('Partida rápida', 'btn secundario', () => ir('#/rapida')),
+        botao('Ranking', 'btn secundario', () => ir('#/ranking')),
       ]),
-      botao(`Minhas figurinhas · ${figurinhasGanhas(s).length} de ${TOTAL_FIGURINHAS}`, 'btn amarelo bloco', () => ir('#/figurinhas')),
+      // a bolinha vermelha mostra quantas figurinhas a pessoa já ganhou
+      botao(['Minhas figurinhas', ganhas ? el('i', { class: 'badge', text: String(ganhas) }) : null].filter(Boolean),
+        'btn secundario bloco', () => ir('#/figurinhas'), `Minhas figurinhas: ${ganhas} de ${TOTAL_FIGURINHAS}`),
     ]),
     black && cartaoBlack(),
     el('section', { class: 'card elenco' }, [
@@ -101,7 +107,7 @@ function abrirInfo(pagina, tipo, id) {
     ...(monstro
       ? [bloco('Por que ele atrapalha', d.atrapalha), bloco('Como a ADN te ajuda a vencer', d.ajuda, true)]
       : [el('p', { class: 'info-quem', text: d.quem }), bloco(d.blocoTit, d.bloco, true), el('p', { class: 'info-jogo', text: d.jogo })]),
-    botao('Entendi', 'btn azul grande bloco', fechar),
+    botao('Entendi', 'btn principal grande bloco', fechar),
   ]);
   folha.addEventListener('click', ev => ev.stopPropagation());
   const veu = el('div', { class: 'veu' }, [folha]);
@@ -116,7 +122,7 @@ export function jornada(raiz, { ir, abrir }) {
   const atual = faseAtual(s);
   const p = el('div', { class: 'pagina jornada' });
   p.append(
-    el('header', { class: 'topo' }, [voltar(ir, '#/'), el('span', { class: 'chip', text: `★ ${Object.values(s.fases).reduce((a, b) => a + b, 0)} de ${TOTAL_FASES * 3}` })]),
+    el('header', { class: 'topo' }, [voltar(ir, '#/'), chip(`${Object.values(s.fases).reduce((a, b) => a + b, 0)} de ${TOTAL_FASES * 3}`)]),
     el('div', { class: 'jornada-cab' }, [
       el('h1', { text: 'A jornada do primeiro apê' }),
       el('p', { text: `${ETAPAS.length} etapas, ${FASES_POR_ETAPA} fases em cada. Do aluguel até a festa no condomínio.` }),
@@ -149,7 +155,7 @@ export function jornada(raiz, { ir, abrir }) {
       pips,
       premioDaEtapa(k + 1, Boolean(s.premios[k + 1]), ir),
     ]);
-    if (aqui) txt.append(botao(`Continuar · Fase ${atual}`, 'btn azul bloco pulsa', () => abrirAntes(p, atual, ir)));
+    if (aqui) txt.append(botao(`Continuar · Fase ${atual}`, 'btn principal bloco pulsa', () => abrirAntes(p, atual, ir)));
     trilha.append(el('div', { class: 'etapa' + (aberta ? '' : ' fechada') + (aqui ? ' aqui' : '') + (completa ? ' completa' : '') }, [
       el('span', { class: 'etapa-num', text: String(k + 1) }),
       el('div', { class: 'etapa-card' }, [foto, txt]),
@@ -203,7 +209,7 @@ function abrirAntes(pagina, n, ir) {
     ]))),
     el('b', { class: 'sub-tit', text: 'Ajudas antes de começar' }),
     ajudas,
-    botao('Jogar', 'btn azul grande bloco pulsa', () => {
+    botao('Jogar', 'btn principal grande bloco pulsa', () => {
       const s2 = ler();
       escolhidas.forEach(id => { s2.ajudas[id] = Math.max(0, (s2.ajudas[id] || 0) - 1); });
       gravar(s2);
@@ -244,7 +250,7 @@ export function rapida(raiz, { ir }) {
       regra('tijolo', 'Tijolo dourado: puxe pra cima', 'Pontos em dobro por 5 s e +3 s', 'ouro'),
       regra('gaia', 'Gaia, a super rara: puxe pra cima', '"Aprovado." Relógio parado e x3 por 5 s', 'super'),
       el('div', { class: 'recorde' }, [el('span', { text: 'Seu recorde' }), el('b', { text: `${s.recorde} pontos` })]),
-      botao('Começar', 'btn azul grande bloco pulsa', () => ir('#/partida/rapida')),
+      botao('Começar', 'btn principal grande bloco pulsa', () => ir('#/partida/rapida')),
     ]),
   );
   raiz.append(p);
@@ -261,12 +267,12 @@ export function ranking(raiz, { ir }) {
   const areaNome = el('div');
   const lista = el('div', { class: 'ranking-lista' });
   p.append(
-    el('header', { class: 'topo' }, [voltar(ir, '#/'), el('b', { text: 'Ranking' }), el('span', { class: 'chip', text: `★ ${ler().recorde}` })]),
+    el('header', { class: 'topo' }, [voltar(ir, '#/'), el('b', { text: 'Ranking' }), chip(String(ler().recorde))]),
     el('div', { class: 'secao' }, [
       el('p', { class: 'nota', text: 'Partida rápida · o melhor resultado de cada jogador.' }),
       areaNome,
       lista,
-      botao('Jogar partida rápida', 'btn azul grande bloco pulsa', () => ir('#/partida/rapida')),
+      botao('Jogar partida rápida', 'btn principal grande bloco pulsa', () => ir('#/partida/rapida')),
     ]),
   );
   raiz.append(p);
@@ -315,7 +321,7 @@ export function ranking(raiz, { ir }) {
     } catch {
       lista.replaceChildren(el('div', { class: 'card ranking-vazio' }, [
         el('p', { text: 'Não deu para carregar o ranking agora. Confira a internet.' }),
-        botao('Tentar de novo', 'btn branco bloco', carregar),
+        botao('Tentar de novo', 'btn secundario bloco', carregar),
       ]));
     }
   }

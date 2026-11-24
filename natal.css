@@ -1,0 +1,93 @@
+/* Natal ADN (publicado em 24/11/2026): uma camada por cima do estilo.css e do visual.css.
+   Só vale quando o <html> tem a classe "natal" (js/natal.js liga pela data, ou com ?natal=1).
+   Conceito "Natal de chave na mão": o presente é a chave do primeiro apê.
+   - a noite de Natal no azul-Atlântico da ADN, com as luzes em amarelo-Alegria;
+   - a fita em laço do brandbook ("a jornada do cliente") vira o laço vermelho do presente;
+   - gorro no logo e no Adeneco, bengala doce nas barras e na trilha. Sem neve: é Natal de verão. */
+:root.natal {
+  --noite: #0a2452;
+  --natal-vermelho: #d8283a;
+  --natal-vermelho-claro: #ff6a72;
+  --natal-vermelho-escuro: #9c1424;
+  --bengala: repeating-linear-gradient(-45deg, #d8283a 0 8px, #fff 8px 16px);
+  --fundo-pagina: #061a3f;
+  --texto-lado: #eef2ff;
+  --mut-lado: #a5b0cc;
+}
+.natal .tela { background: var(--noite); }
+
+/* ---------- pisca-pisca: o fio e as lâmpadas (o SVG é montado no js/natal.js, na largura de onde ele é pendurado) ---------- */
+.pisca { position: absolute; z-index: 6; left: 0; right: 0; top: 0; height: 34px; pointer-events: none; overflow: visible; }
+.pisca svg { display: block; width: 100%; height: 100%; overflow: visible; }
+.pisca .fio { fill: none; stroke: #0b2f2a; stroke-width: 2; stroke-linecap: round; }
+.pisca .luz { animation: pisca-luz 1.6s ease-in-out infinite; }
+.pisca .luz.b { animation-delay: -.8s; }
+.pisca .halo { opacity: .5; }
+@keyframes pisca-luz { 0%, 100% { opacity: 1; } 50% { opacity: .45; } }
+/* pendurado na borda de cima de uma caixa (placar, painel, cartão) */
+.pisca.borda { left: 14px; right: 14px; top: -5px; }
+/* no painel, o fio corre no aro dourado e as lâmpadas caem sobre o azul; a faixa do título fica por cima */
+.natal .painel > .pisca { z-index: 2; left: 24px; right: 24px; top: 3px; }
+.natal .hud > .pisca { top: -7px; }
+.natal .parabens-card > .pisca, .natal .rapida-card > .pisca { top: -6px; }
+.natal .carregando > .pisca { top: var(--topo); }
+.natal .capa-cena > .pisca { top: var(--topo); }
+
+/* ---------- capa: a cena de Natal some no azul da noite e o logo (com o T de gorro) sobe um pouco ---------- */
+.natal .inicio { --capa-fundo: var(--noite); }
+.natal .capa-veu { background: linear-gradient(180deg, rgba(4, 22, 60, .5) 0%, rgba(4, 22, 60, 0) 24%, rgba(4, 22, 60, 0) 66%, var(--capa-fundo) 94%); }
+.natal .inicio .topo { padding-top: calc(var(--topo) + 26px); }
+.natal .logo3d { top: calc(var(--topo) + 58px); width: 66%; }
+
+/* ---------- o cartão de Natal na tela inicial (no lugar do cartão da Black Friday): o presente é a chave ---------- */
+.natal-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  margin: 26px 16px 0;
+  padding: 30px 18px 18px;
+  border-radius: 24px;
+  color: #fff;
+  text-align: center;
+  background: radial-gradient(90% 60% at 50% 0%, rgba(255, 210, 0, .28) 0%, rgba(255, 210, 0, 0) 70%), linear-gradient(180deg, #0f3f8f 0%, var(--noite) 100%);
+  box-shadow: inset 0 0 0 2px rgba(255, 210, 0, .6), 0 12px 28px rgba(0, 10, 40, .45);
+}
+.natal-card .natal-chave { width: 92px; margin: -2px 0 -4px; filter: drop-shadow(0 6px 8px rgba(0, 0, 0, .35)); }
+.natal-card small.rotulo { padding: 4px 12px; border-radius: 10px; background: var(--natal-vermelho); font: 800 11.5px/1 var(--fonte); letter-spacing: .08em; text-transform: uppercase; }
+.natal-card h3 { font-family: var(--titulo); font-size: 23px; font-weight: 700; line-height: 1.12; text-wrap: balance; }
+/* a palavra de destaque em script, como o manual da ADN pede */
+.natal-card h3 em { font-family: var(--script); font-style: normal; font-weight: 400; font-size: 1.22em; color: #ffd200; }
+.natal-card p { font-size: 14px; line-height: 1.4; color: #d5e4ff; text-wrap: balance; }
+.natal-card .btn { margin-top: 6px; }
+.natal-card .recorte { position: absolute; inset: 0; overflow: hidden; border-radius: 24px; pointer-events: none; }
+.natal-card .fita-canto {
+  position: absolute;
+  left: -34px;
+  top: 18px;
+  width: 130px;
+  height: 20px;
+  rotate: -45deg;
+  background: linear-gradient(180deg, var(--natal-vermelho-claro), var(--natal-vermelho) 55%, var(--natal-vermelho-escuro));
+  box-shadow: 0 2px 4px rgba(0, 0, 0, .3);
+}
+
+/* ---------- bengala doce: a trilha da jornada, o medidor de combo e a barra de carregamento ---------- */
+.natal .trilha::before { width: 7px; left: 31.5px; border-radius: 4px; background: var(--bengala); box-shadow: 0 0 0 1.5px rgba(156, 20, 36, .35); }
+.natal .medidor i { background: var(--bengala); }
+.natal .medidor small { text-shadow: 0 1px 0 #021a4a, 0 0 4px #021a4a; }
+.natal .barra b { background: var(--bengala); box-shadow: inset 0 4px 0 rgba(255, 255, 255, .45); }
+
+/* ---------- laço: os títulos em faixa ficam vermelhos, como fita de presente ---------- */
+.natal .faixa div { background: linear-gradient(180deg, var(--natal-vermelho-claro), var(--natal-vermelho) 55%, #b3162a); box-shadow: inset 0 0 0 2px #7d0a18, inset 0 5px 0 rgba(255, 255, 255, .3), inset 0 -5px 0 var(--natal-vermelho-escuro); }
+.natal .faixa .txt { -webkit-text-stroke-color: #6b0714; text-shadow: 0 3px 0 #6b0714; }
+.natal .chip-ouro, .natal .antes-chip { background: linear-gradient(180deg, var(--natal-vermelho-claro), var(--natal-vermelho)); color: #fff; box-shadow: 0 3px 0 var(--natal-vermelho-escuro); }
+.natal-laco { position: absolute; z-index: 6; pointer-events: none; filter: drop-shadow(0 5px 6px rgba(0, 0, 0, .35)); }
+.natal .painel > .natal-laco { left: -20px; top: -8px; width: 84px; rotate: -18deg; }
+.natal .premio-bloco { position: relative; margin-top: 22px; padding-top: 30px; box-shadow: inset 0 0 0 2px #f1c24b; }
+.natal .premio-bloco > .natal-laco { left: 50%; top: -30px; width: 70px; margin-left: -35px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .pisca .luz { animation: none; }
+}

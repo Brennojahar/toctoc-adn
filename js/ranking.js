@@ -41,7 +41,7 @@ export function formNome({ texto = 'Como você quer aparecer no ranking?', botao
   const erro = el('small', { class: 'nome-erro' });
   const form = el('form', { class: 'form-nome' }, [
     el('b', { text: texto }),
-    el('div', { class: 'nome-linha' }, [campo, el('button', { class: 'btn azul', type: 'submit', text: botaoTexto })]),
+    el('div', { class: 'nome-linha' }, [campo, el('button', { class: 'btn principal', type: 'submit', text: botaoTexto })]),
     erro,
   ]);
   form.addEventListener('submit', ev => {
