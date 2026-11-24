@@ -20,7 +20,7 @@ const SVG_X = '<svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18" stroke="#
 export function estrelas(n) {
   defs();
   return el('div', { class: 'estrelas' }, [1, 2, 3].map(k => {
-    const e = el('span', { class: 'estrela' + (k <= n ? ' on' : ''), html: SVG_APAGADA + (k <= n ? SVG_OURO : '') });
+    const e = el('span', { class: 'estrela-pop' + (k <= n ? ' on' : ''), html: SVG_APAGADA + (k <= n ? SVG_OURO : '') });
     e.style.setProperty('--k', k);
     return e;
   }));
@@ -29,7 +29,7 @@ export function estrelas(n) {
 // Brilhinhos que piscam em volta do prêmio.
 export function brilhos(pontos) {
   return pontos.map(([x, y, escala = 1], i) => {
-    const b = el('i', { class: 'brilho' });
+    const b = el('i', { class: 'brilho-pop' });
     b.style.cssText = `left:${x}%;top:${y}%;scale:${escala};animation-delay:${(i * -0.55).toFixed(2)}s`;
     return b;
   });
@@ -95,7 +95,8 @@ export function confeteLados(onde, n = 26, forca = 1) {
 // Um fogo de artifício: clarão no centro e as faíscas abrindo em roda. x e y em % da tela.
 export function fogo(onde, x, y, cor) {
   if (semMovimento()) return;
-  const f = el('div', { class: 'fogo' });
+  // "rojao", e não "fogo": fogo é o modo de combo da partida (jogo.js), que põe essa classe na página inteira
+  const f = el('div', { class: 'rojao' });
   f.style.cssText = `left:${x}%;top:${y}%;--c:${cor}`;
   const n = 16;
   for (let k = 0; k < n; k++) {

@@ -522,7 +522,7 @@ export function partida(raiz, { fase, ajudas = [], ir }) {
       el('div', { class: 'txt titulo' + (titulo.length > 12 ? ' longo' : ''), text: titulo }),
       el('div', { class: 'sub', text: sub }),
       el('div', { class: 'pop-numeros' }, caixas),
-      ajuda ? el('div', { class: 'ganho' }, [
+      ajuda ? el('div', { class: 'ganho-ajuda' }, [
         el('span', { class: 'pastilha' }, [ajuda.img === 'relogio' ? el('span', { html: ICONES.relogio }).firstChild : img(ajuda.img)]),
         el('p', {}, ['3 estrelas! Você ganhou', el('b', { text: ajuda.nome })]),
       ]) : null,

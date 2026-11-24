@@ -109,7 +109,7 @@ function enfeitar(tela) {
   // prêmio: o laço de presente (no bloco das figurinhas e no canto do painel que traz um prêmio)
   tela.querySelectorAll('.premio-bloco').forEach(b => uma(b, () => b.append(img('natal/laco', 'natal-laco'))));
   tela.querySelectorAll('.painel').forEach(p => {
-    if (p.querySelector('.pop-figs, .ganho') && !p.querySelector(':scope > .natal-laco')) p.append(img('natal/laco', 'natal-laco'));
+    if (p.querySelector('.pop-figs, .ganho-ajuda') && !p.querySelector(':scope > .natal-laco')) p.append(img('natal/laco', 'natal-laco'));
   });
 }
 
