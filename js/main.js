@@ -7,6 +7,7 @@ import { IMG } from './util.js';
 import { MONSTROS, FIGURINHAS } from './dados.js';
 import { ligarBlack } from './black.js';
 import { ligarNatal, natalAtivo, IMAGENS_NATAL } from './natal.js';
+import { avisoComputador } from './computador.js';
 
 ligarNatal(); // Natal ADN: troca as artes e veste as telas (vem antes de tudo, porque muda as imagens que serão carregadas)
 ligarBlack(); // Black Friday ADN: de 09 a 26/11 o jogo veste o tema da campanha
@@ -65,6 +66,7 @@ enviarLead(); // um cadastro que ficou sem internet vai agora
 enviarIndicacoes(); // e as indicações que ficaram esperando
 // o áudio só é liberado depois do primeiro toque (o iPhone só aceita no fim do toque ou no clique)
 ['pointerdown', 'touchend', 'click'].forEach(ev => window.addEventListener(ev, destravar, { passive: true }));
+avisoComputador(); // no computador: "o jogo é melhor no celular", com o QR
 
 // carrega as imagens antes de abrir, para nada piscar no meio da partida
 const IMAGENS = [

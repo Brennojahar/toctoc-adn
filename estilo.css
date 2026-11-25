@@ -89,8 +89,106 @@ img { -webkit-user-drag: none; user-select: none; }
 .lado p { font-size: 15px; line-height: 1.5; margin-bottom: 10px; }
 .lado .fraco { color: var(--mut-lado); font-size: 14px; }
 
+/* ---------- computador (25/11/2026): marca à esquerda, celular no meio, "melhor no celular" à direita ---------- */
+.moldura {
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  grid-template-columns: minmax(0, 300px) auto minmax(0, 250px);
+  grid-template-areas: "lado aparelho celular";
+  justify-content: center;
+  align-items: center;
+}
+.moldura::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  pointer-events: none;
+  background:
+    radial-gradient(34% 46% at 50% 50%, rgba(56, 178, 232, .22), transparent 70%),
+    radial-gradient(40% 30% at 50% 108%, rgba(255, 210, 0, .16), transparent 70%);
+}
+.aparelho { grid-area: aparelho; }
+.lado { grid-area: lado; }
+.pc-celular {
+  grid-area: celular;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 22px 22px 20px;
+  border-radius: 24px;
+  color: var(--texto-lado);
+  background: color-mix(in srgb, var(--texto-lado) 6%, transparent);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--texto-lado) 13%, transparent);
+}
+.pc-selo {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px 6px 9px;
+  border-radius: 99px;
+  background: var(--amarelo);
+  color: var(--azul-escuro);
+  font: 800 13px/1 var(--fonte);
+}
+.pc-selo svg { width: 17px; height: 17px; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; }
+.pc-celular h2 { margin: 14px 0 16px; font: 700 23px/1.1 var(--jogo); letter-spacing: -.01em; }
+.pc-qr {
+  display: block;
+  width: 164px;
+  height: 164px;
+  padding: 8px;
+  border-radius: 18px;
+  background: #fff;
+  box-shadow: 0 0 0 4px var(--amarelo), 0 14px 30px rgba(0, 30, 69, .3);
+}
+.pc-celular p { margin: 18px 0 8px; font-size: 15px; line-height: 1.45; }
+.pc-celular small { color: var(--mut-lado); font-size: 13px; line-height: 1.45; }
+
+/* os monstrinhos espiando nos cantos da página (só com espaço sobrando) */
+.pc-espia {
+  position: fixed;
+  z-index: -1;
+  bottom: 0;
+  height: min(30vh, 260px);
+  width: auto;
+  pointer-events: none;
+  filter: drop-shadow(0 18px 30px rgba(0, 0, 0, .35));
+}
+.pc-espia-esq { left: max(2vw, 16px); transform: translateY(32%) rotate(9deg); }
+.pc-espia-dir { right: max(2vw, 16px); transform: translateY(30%) rotate(-8deg); }
+
+/* computador mais estreito: o celular à esquerda e as duas colunas de texto empilhadas à direita */
+@media (max-width: 1179px) {
+  .moldura {
+    grid-template-columns: auto minmax(0, 340px);
+    grid-template-areas: "aparelho lado" "aparelho celular";
+    align-content: center;
+    column-gap: 44px;
+    row-gap: 20px;
+  }
+  .lado { align-self: end; }
+  .lado .fraco { display: none; }
+  .pc-celular {
+    align-self: start;
+    display: grid;
+    grid-template-columns: 120px 1fr;
+    grid-template-areas: "selo selo" "qr titulo" "qr texto";
+    column-gap: 18px;
+    align-items: start;
+  }
+  .pc-selo { grid-area: selo; justify-self: start; margin-bottom: 14px; }
+  .pc-celular h2 { grid-area: titulo; margin: 0 0 6px; font-size: 19px; }
+  .pc-qr { grid-area: qr; width: 120px; height: 120px; padding: 6px; border-radius: 14px; }
+  .pc-celular p { grid-area: texto; margin: 0; font-size: 14px; }
+  .pc-celular small { display: none; }
+}
+@media (max-width: 1179px), (max-height: 640px) { .pc-espia { display: none; } }
+
 @media (max-width: 760px), (pointer: coarse) and (max-width: 1100px) {
   .moldura { display: block; padding: 0; }
+  .pc-celular, .pc-espia, .pc-entrada { display: none; }
   .aparelho { width: 100%; height: 100dvh; padding: 0; border-radius: 0; box-shadow: none; }
   .tela { border-radius: 0; }
   .lado { display: none; }
@@ -1415,3 +1513,56 @@ img.bloqueada { -webkit-touch-callout: none; pointer-events: none; }
 .ind-ok { color: var(--verde); font-size: 13px; font-weight: 900; }
 .premio-bloco.indicar { background: linear-gradient(180deg, #eef7fd, #ddeefa); }
 .premio-bloco.indicar .premio-tit { color: var(--azul); }
+
+/* ---------- aviso de entrada no computador (25/11/2026) ---------- */
+.pc-entrada {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: rgba(0, 18, 45, .62);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  animation: pc-entrada-vem .26s ease-out;
+}
+.pc-entrada.saindo { opacity: 0; transition: opacity .2s ease-in; }
+@keyframes pc-entrada-vem { from { opacity: 0; } }
+.pc-entrada-caixa {
+  display: flex;
+  align-items: center;
+  gap: 30px;
+  width: min(620px, 100%);
+  padding: 30px 32px;
+  border-radius: 28px;
+  background: #fff;
+  color: var(--texto);
+  box-shadow: 0 30px 80px rgba(0, 10, 30, .45), inset 0 0 0 1px var(--linha);
+  animation: pc-entrada-sobe .34s var(--mola);
+}
+@keyframes pc-entrada-sobe { from { transform: translateY(14px) scale(.97); opacity: 0; } }
+.pc-entrada-qr {
+  flex-shrink: 0;
+  width: 176px;
+  height: 176px;
+  padding: 8px;
+  border-radius: 20px;
+  background: #fff;
+  box-shadow: 0 0 0 4px var(--amarelo), 0 12px 26px rgba(0, 30, 69, .18);
+}
+.pc-entrada h2 { margin: 12px 0 8px; color: var(--azul-escuro); font: 700 26px/1.08 var(--jogo); letter-spacing: -.01em; }
+.pc-entrada p { color: var(--mut); font-size: 15px; line-height: 1.45; }
+.pc-entrada-botoes { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 20px; }
+.pc-entrada-botoes button {
+  padding: 12px 20px;
+  border-radius: 14px;
+  font: 700 16px/1 var(--jogo);
+  transition: transform .12s ease, filter .12s ease;
+}
+.pc-entrada-botoes button:hover { filter: brightness(1.05); }
+.pc-entrada-botoes button:active { transform: scale(.97); }
+.pc-entrada-botoes button:focus-visible { outline: 3px solid var(--azul-claro); outline-offset: 2px; }
+.pc-entrada-jogar { background: var(--amarelo); color: var(--azul-escuro); box-shadow: inset 0 -3px 0 var(--mostarda); }
+.pc-entrada-copiar { background: var(--creme); color: var(--azul); box-shadow: inset 0 0 0 1.5px var(--linha); }
+@media (prefers-reduced-motion: reduce) { .pc-entrada, .pc-entrada-caixa { animation: none; } }
