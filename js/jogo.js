@@ -146,7 +146,7 @@ export function partida(raiz, { fase, ajudas = [], ir }) {
       if (tipo === 'gaia' || tipo === 'tijolo') E.ultimoBonus = agora;
       const monstro = tipo === 'monstro' ? cfg.monstros[Math.floor(Math.random() * cfg.monstros.length)] : null;
       const vida = cfg.vivo * (tipo === 'gaia' ? 1.9 : tipo === 'tijolo' ? 1.7 : 1) * (emSuper ? 0.85 : 1);
-      const elImg = img(monstro ? `m-${monstro}` : tipo, `sai ${tipo}${monstro ? ' m-' + monstro : ''}`);
+      const elImg = img(monstro ? `m-${monstro}-sai` : tipo, `sai ${tipo}${monstro ? ' m-' + monstro : ''}`);
       elImg.decoding = 'sync';
       mascaras[i].append(elImg);
       E.buracos[i] = { id: seq++, tipo, monstro, ate: agora + vida, el: elImg };
@@ -209,7 +209,8 @@ export function partida(raiz, { fase, ajudas = [], ir }) {
   function baterMonstro(i) {
     const b = E.buracos[i];
     b.batido = true;
-    b.ate = Date.now() + 380;
+    b.ate = Date.now() + 520;
+    b.el.src = IMG(`m-${b.monstro}-tonto`);
     b.el.classList.add('batido');
     martelar(i);
     E.combo += 1;
@@ -265,7 +266,8 @@ export function partida(raiz, { fase, ajudas = [], ir }) {
     alvos.forEach(i => {
       const b = E.buracos[i];
       b.batido = true;
-      b.ate = Date.now() + 380;
+      b.ate = Date.now() + 520;
+      b.el.src = IMG(`m-${b.monstro}-tonto`);
       b.el.classList.add('batido');
       faiscas(i, 'nuvem');
       pop(i, '+' + bonus);

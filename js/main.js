@@ -69,7 +69,7 @@ enviarIndicacoes(); // e as indicações que ficaram esperando
 // carrega as imagens antes de abrir, para nada piscar no meio da partida
 const IMAGENS = [
   'adeneco', 'adeneco-tonto', 'adeneco-festa', 'adeneco-aponta', 'tijolo', 'gaia', 'martelo', 'martelo-esq', 'chave', 'logo-adn-branco',
-  ...Object.keys(MONSTROS).map(id => `m-${id}`),
+  ...Object.keys(MONSTROS).flatMap(id => [`m-${id}`, `m-${id}-sai`, `m-${id}-tonto`]),
   ...(natalAtivo() ? IMAGENS_NATAL : []),
   'capa', 'logo-3d', 'fundo-casa', 'fundo-plantao', 'fundo-obra', 'fundo-decorado', 'fundo-chaves', 'fundo-festa',
   ...Object.keys(FIGURINHAS).flatMap(id => [`figurinhas/${id}-mini`, `figurinhas/${id}-bloqueada`]),

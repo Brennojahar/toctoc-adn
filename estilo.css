@@ -663,18 +663,17 @@ img { -webkit-user-drag: none; user-select: none; }
   pointer-events: none;
   will-change: transform;
 }
-.sai.monstro { width: 58%; bottom: -12cqw; }
-/* os engraçados têm pé e proporções diferentes: cada um com a largura que deixa o rosto no tamanho dos outros */
-.sai.m-sogra { width: 70%; bottom: -16cqw; }
-.sai.m-banheiro { width: 58%; bottom: -32cqw; }
-.sai.m-solteiro { width: 84%; bottom: -10cqw; }
-.sai.m-goteira { width: 64%; bottom: -18cqw; }
-.sai.m-cunhado { width: 68%; bottom: -26cqw; }
+/* monstrinhos 3D: as duas poses de cada um (sai e tonto) têm a mesma tela, cortada no quadril; o tamanho vem da altura */
+.sai.monstro { width: auto; height: 92cqw; bottom: -10cqw; }
+/* os mais largos (calculadora, placa) descem um pouco para não passar da borda */
+.sai.m-juros { height: 80cqw; }
+.sai.m-longe { height: 84cqw; }
 .sai.adeneco { width: 100%; bottom: -26cqw; }
 .sai.tijolo { width: 70%; bottom: -30cqw; }
 .sai.gaia { width: 74%; bottom: -24cqw; }
 .sai.desce { animation: desce .16s ease-in forwards; }
-.sai.monstro.batido { animation: monstro-some .38s ease-in forwards; }
+/* martelada: a arte troca para a pose tonta (jogo.js), amassa, balança e afunda no buraco */
+.sai.monstro.batido { animation: monstro-tonteia .5s linear forwards; }
 .sai.adeneco.batido { animation: achata .42s cubic-bezier(.5, 0, .75, 0) forwards; }
 .sai.coletado { animation: coleta .95s cubic-bezier(.3, .9, .4, 1) forwards; }
 .sai.tijolo, .sai.gaia { animation: sobe .22s cubic-bezier(.2, 1.4, .4, 1) forwards, balanca 1.1s .25s ease-in-out infinite; }
@@ -694,6 +693,13 @@ img { -webkit-user-drag: none; user-select: none; }
   0% { transform: translate(-50%, 0) scale(1.22, .7); filter: brightness(1.6); }
   40% { transform: translate(-50%, 0) scale(.85, 1.15); filter: brightness(1); }
   100% { transform: translate(-50%, 10%) scale(.2); opacity: 0; }
+}
+@keyframes monstro-tonteia {
+  0% { transform: translate(-50%, 2%) scale(1.16, .78); filter: brightness(1.45); animation-timing-function: cubic-bezier(.33, 0, .67, 1); }
+  18% { transform: translate(-50%, 0) scale(.95, 1.06) rotate(-7deg); filter: brightness(1); animation-timing-function: cubic-bezier(.33, 0, .67, 1); }
+  36% { transform: translate(-50%, 0) scale(1.02, .98) rotate(6deg); animation-timing-function: cubic-bezier(.33, 0, .67, 1); }
+  52% { transform: translate(-50%, 1%) scale(1) rotate(-3deg); animation-timing-function: cubic-bezier(.5, 0, .75, 0); }
+  100% { transform: translate(-50%, 118%) scale(1) rotate(0deg); }
 }
 @keyframes achata {
   0% { transform: translate(-50%, 0) scale(1.12, .8); }
