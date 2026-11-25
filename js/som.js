@@ -1,6 +1,11 @@
 // Efeitos sintetizados na hora (WebAudio) e duas musiquinhas 8-bit em loop: a do menu e a da fase.
 import { ler, gravar } from './salvo.js';
 
+// Um defeito no áudio do aparelho (tempo do áudio inválido, áudio interrompido) nunca pode parar o jogo:
+// os sons e a música são chamados no meio da contagem e das marteladas. Se falhar, só fica sem aquele som.
+// (Em 25/11/2026 a contagem travou no "3" uma vez com "The provided value is non-finite", vindo do 'bip'.)
+const semFalha = fn => (...args) => { try { return fn(...args); } catch { return undefined; } };
+
 let ctx = null;
 let mestre = null;
 let ligado = ler().som;
@@ -60,7 +65,8 @@ function abafar(seg) {
   g.linearRampToValueAtTime(v, t + seg + 0.35);
 }
 
-export function destravar() {
+export const destravar = semFalha(destravarCru);
+function destravarCru() {
   if (!ligado || !audio()) return;
   liberado = true;
   if (desejada && !musica) iniciar(desejada.nome, desejada.pressa);
@@ -74,7 +80,7 @@ export function alternarSom() {
   s.som = ligado;
   gravar(s);
   if (ligado) destravar();
-  else parar();
+  else pararSemFalha();
   return ligado;
 }
 
@@ -127,7 +133,8 @@ function sino(f, t, dur, vol) {
   tom(f * 5.4, t, dur * 0.25, 'sine', vol * 0.15);
 }
 
-export function efeito(nome, n = 0) {
+export const efeito = semFalha(efeitoCru);
+function efeitoCru(nome, n = 0) {
   if (!ligado) return;
   const a = audio();
   if (!a) return;
@@ -317,7 +324,8 @@ const TRILHAS = {
 
 let musica = null;
 
-export function tocarMusica(nome = 'fase', pressa = false) {
+export const tocarMusica = semFalha(tocarMusicaCru);
+function tocarMusicaCru(nome = 'fase', pressa = false) {
   desejada = { nome, pressa };
   if (!ligado || !liberado) return;
   if (musica && musica.nome === nome) {
@@ -341,6 +349,7 @@ function iniciar(nome, pressa) {
   const agendar = () => {
     if (musica !== m) return;
     const colcheia = 60 / (m.pressa && tr.bpmPressa ? tr.bpmPressa : tr.bpm) / 2;
+    try {
     while (m.prox < a.currentTime + 0.25) {
       const compasso = Math.floor(m.passo / 8) % tr.notasBaixo.length;
       const p = m.passo % 8;
@@ -354,11 +363,13 @@ function iniciar(nome, pressa) {
       m.passo++;
       m.prox += colcheia;
     }
+    } catch { /* fica sem este pedaço da música */ }
     m.timer = setTimeout(agendar, 60);
   };
   agendar();
 }
 
+const pararSemFalha = semFalha(parar);
 function parar(fade = 0.3) {
   if (!musica || !ctx) return;
   const m = musica;
@@ -374,5 +385,5 @@ function parar(fade = 0.3) {
 export function pararMusica(so) {
   if (so && (musica?.nome ?? desejada?.nome) !== so) return;
   desejada = null;
-  parar();
+  pararSemFalha();
 }

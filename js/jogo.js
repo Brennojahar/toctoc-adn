@@ -440,17 +440,18 @@ export function partida(raiz, { fase, ajudas = [], ir }) {
     const aviso = rapida ? 'Faça o máximo em 60 segundos' : `Acerte ${cfg.meta} monstrinhos · não bata no Adeneco`;
     const c = el('div', { class: 'conta' }, [el('b', { text: n || 'Já!' }), el('small', { text: aviso })]);
     pagina.append(c);
+    // o próximo passo é agendado antes do som: se o áudio falhar, a partida começa do mesmo jeito
     if (n === 0) {
-      efeito('largada');
       depois(420, () => c.remove());
       E.estado = 'jogo';
       relogioRoda();
       cicloAparicoes();
       hud();
+      efeito('largada');
       return;
     }
-    efeito('bip');
     depois(650, () => contagem(n - 1));
+    efeito('bip');
   }
 
   // ---------- fim ----------
