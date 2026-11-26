@@ -2,7 +2,6 @@
 import { ETAPAS, FIGURINHAS, WHATSAPP_CORRETOR, mensagemCorretor, fasesDaEtapa, cenarioDaFase, DESCONTO, MAX_INDICACOES } from './dados.js';
 import { ler, gravar, codigoPremio } from './salvo.js';
 import { atualizarLead, enviarIndicacoes, mascara, digitos } from './cadastro.js';
-import { BLACK, blackAtiva, faixaBlack } from './black.js';
 import { efeito } from './som.js';
 import { el, img, botao, chip, ICONES } from './util.js';
 import { painel, veuCentro, brilhos } from './festa.js';
@@ -86,7 +85,7 @@ function figurinhasDoPremio(ids, mais = false) {
 
 function botaoCorretor() {
   const indicados = ler().indicacoes?.total || 0;
-  const href = `https://wa.me/${WHATSAPP_CORRETOR}?text=${encodeURIComponent(mensagemCorretor(codigoPremio(), indicados) + (blackAtiva() ? BLACK.mensagemPremio : ''))}`;
+  const href = `https://wa.me/${WHATSAPP_CORRETOR}?text=${encodeURIComponent(mensagemCorretor(codigoPremio(), indicados))}`;
   const a = el('a', { class: 'btn whats grande bloco pulsa', href, target: '_blank', rel: 'noopener', html: `${ICONES.whatsapp}<span>Falar com um corretor</span>` });
   a.addEventListener('click', () => {
     efeito('confirma');
@@ -185,7 +184,6 @@ function desconto() {
     el('div', { class: 'codigo' }, [el('small', { text: 'Seu código' }), el('b', { text: codigoPremio() })]),
     botaoCorretor(),
     el('small', { class: 'como', text: 'A mensagem já vai pronta: o corretor fica sabendo do seu desconto e explica as condições.' }),
-    blackAtiva() ? faixaBlack() : null,
   ]);
 }
 

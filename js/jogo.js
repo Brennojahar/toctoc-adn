@@ -1,5 +1,6 @@
 // A partida: buracos, aparições, marteladas, combo, poderes do Tijolo e da Gaia, fim.
 import { configFase, cenarioDaFase, numEtapa, fasesDaEtapa, ETAPAS, CENARIOS, COMBOS, estrelas, TOTAL_FASES, AJUDAS } from './dados.js';
+import { linkSite } from './site.js';
 import { efeito, vibrar, tocarMusica, pararMusica } from './som.js';
 import { ler, gravar } from './salvo.js';
 import { el, img, botao, IMG, ICONES } from './util.js';
@@ -64,10 +65,12 @@ export function partida(raiz, { fase, ajudas = [], ir }) {
   function hud() {
     const agora = Date.now();
     const parado = agora < E.superAte;
-    relogio.style.setProperty('--p', Math.max(0, E.resta) / duracao);
+    const resta = Math.max(0, E.resta);
+    // o Tijolo dá +3 s: o tempo pode passar do total, mas o anel do relógio para no cheio
+    relogio.style.setProperty('--p', Math.min(1, resta / duracao));
     relogio.classList.toggle('pressa', E.estado === 'jogo' && E.resta <= limitePressa && !parado);
     relogio.classList.toggle('parado', parado);
-    relogio.firstChild.textContent = `0:${String(Math.max(0, E.resta)).padStart(2, '0')}`;
+    relogio.firstChild.textContent = `${Math.floor(resta / 60)}:${String(resta % 60).padStart(2, '0')}`;
     placar.firstChild.textContent = rapida ? 'Pontos' : `Monstrinhos · ${E.pontos} pts`;
     placar.lastChild.innerHTML = rapida ? `${E.pontos}` : `${E.acertos}<em> / ${cfg.meta}</em>`;
     const m = multCombo(E.combo);
@@ -419,6 +422,7 @@ export function partida(raiz, { fase, ajudas = [], ir }) {
     const veu = veuCentro(painel({ faixa: 'Pausa', raios: false, classe: 'pausa' }, [
       botao('Continuar', 'btn principal grande bloco', () => { veu.remove(); continuar(); }),
       botao('Sair da partida', 'btn secundario bloco', () => ir(rapida ? '#/rapida' : '#/jornada')),
+      linkSite('link pausa-site', 'Voltar ao site da ADN'),
     ]));
     pagina.append(veu);
     efeito('sobe');
@@ -426,8 +430,9 @@ export function partida(raiz, { fase, ajudas = [], ir }) {
   function continuar() {
     const parado = Date.now() - E.pausaDesde;
     E.buracos.forEach(b => { if (b) b.ate += parado; });
-    if (E.poderAte) E.poderAte += parado;
-    if (E.superAte) E.superAte += parado;
+    // só o poder que ainda valia quando pausou ganha o tempo parado (um que já tinha acabado não volta)
+    if (E.poderAte > E.pausaDesde) E.poderAte += parado;
+    if (E.superAte > E.pausaDesde) E.superAte += parado;
     E.pausa = false;
     tocarMusica('fase', E.resta <= limitePressa);
   }
@@ -448,6 +453,8 @@ export function partida(raiz, { fase, ajudas = [], ir }) {
       cicloAparicoes();
       hud();
       efeito('largada');
+      // a aba saiu de vista durante a contagem: a partida já começa pausada
+      if (document.hidden) pausar();
       return;
     }
     depois(650, () => contagem(n - 1));

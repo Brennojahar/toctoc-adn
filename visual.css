@@ -1,6 +1,5 @@
-/* Visual novo (feito em teste em 18/11/2026, publicado em 24/11): uma camada por cima do estilo.css e do black.css.
-   Vem das referências que o Breno mandou (arte/refs/visual-ref/NOTAS.md, na pasta do jogo) e da prévia que ele aprovou
-   (arte/previa-visual). A marca da ADN continua: azul, amarelo, personagens e logo. Mudam o volume, a luz e o acabamento:
+/* Visual novo: uma camada por cima do estilo.css.
+   A marca da ADN continua: azul, amarelo, personagens e logo. Mudam o volume, a luz e o acabamento:
    botões gordos com aro dourado, painéis azuis com faixa de título, logo do jogo em 3D e as animações de fase e de vitória. */
 :root {
   --jogo: 'Fredoka', 'Inter', system-ui, sans-serif;
@@ -80,7 +79,6 @@
 .btn svg { flex-shrink: 0; filter: drop-shadow(0 2px 0 rgba(0, 0, 0, .3)); }
 .dupla .btn { padding-left: 8px; padding-right: 8px; font-size: 18px; }
 .nome-linha .btn { min-height: 50px; font-size: 17px; }
-.black-card .btn { font-family: var(--jogo); font-size: 18px; font-weight: 700; }
 .inicio .btn.grande { min-height: 76px; border-radius: 26px; font-size: 29px; }
 .inicio .btn.grande::before { border-radius: 21.5px; }
 /* a bolinha vermelha com o contador, no canto do botão */
@@ -176,8 +174,8 @@
   position: absolute !important;
   z-index: 2;
   left: 50%;
-  top: calc(var(--topo) + 60px);
-  width: 76%;
+  top: calc(var(--topo) + 74px);
+  width: 70%;
   max-width: 310px;
   translate: -50% 0;
   filter: drop-shadow(0 10px 12px rgba(0, 30, 80, .45));
@@ -187,9 +185,6 @@
 .inicio .botoes { gap: 17px; padding-top: 22px; }
 .inicio .dupla { gap: 12px; }
 .topo-capa .redondo { width: 48px; height: 48px; }
-/* Black Friday: as fitas ocupam o topo, então o logo desce e encolhe */
-.black .inicio .topo { padding-top: 0; }
-.black .logo3d { top: calc(var(--topo) + 110px); width: 52%; }
 
 /* ---------- painel e pop-up: azul da ADN com aro dourado grosso ---------- */
 .veu.centro {
@@ -430,7 +425,7 @@
 }
 
 /* ---------- folhas brancas (antes da fase, cards): seguem claras para ler, com as peças novas ---------- */
-.antes-tit, .info-tit, .res-tit, .jornada-cab h1, .rapida-card h1, .cad-card h1, .parabens-card h1, .parabens-card h2, .premio-grande, .codigo b, .recorde b { font-weight: 700; }
+.antes-tit, .info-tit, .jornada-cab h1, .rapida-card h1, .cad-card h1, .parabens-card h1, .parabens-card h2, .premio-grande, .codigo b, .recorde b { font-weight: 700; }
 .ajuda em { top: -8px; right: -5px; min-width: 26px; height: 26px; border-radius: 13px; background: linear-gradient(180deg, #ff6b5e, #e01f2d); box-shadow: inset 0 0 0 2px #fff, 0 3px 0 #8a0612; font-family: var(--jogo); font-size: 14px; font-weight: 700; }
 .ajuda.on em { background: linear-gradient(180deg, #7dea4a, #1fa81a); box-shadow: inset 0 0 0 2px #fff, 0 3px 0 #0b4a10; }
 .chip-ouro { font-family: var(--jogo); font-size: 12.5px; font-weight: 700; box-shadow: inset 0 0 0 2px #b86a00, 0 3px 0 rgba(120, 70, 0, .45); }

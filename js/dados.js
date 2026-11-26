@@ -1,6 +1,6 @@
 // Elenco, cenários, etapas da jornada e regras de cada fase.
 
-// `atrapalha` e `ajuda` aparecem no card de cada monstrinho. Textos de rascunho: a ADN aprova antes de publicar.
+// `atrapalha` e `ajuda` aparecem no card de cada monstrinho.
 export const MONSTROS = {
   juros: {
     nome: 'Juros', vence: 'Ajuda no financiamento',
@@ -91,11 +91,9 @@ export const CENARIOS = [
   { id: 'festa',    nome: 'Festa no condomínio', monstros: ['juros', 'aluguel', 'obra', 'longe', 'apertado', 'sogra', 'banheiro', 'solteiro', 'goteira', 'cunhado'], anel: '#dfcab7', borda: '#695e55' },
 ];
 
-// A jornada do primeiro apê: 3 etapas, 2 fases em cada (pedido do Breno em 11/11/2026).
-// Eram 6 etapas e 12 fases, muito para chegar ao fim. Cada etapa de agora junta duas das antigas:
-// os dois cenários (um por fase), os monstrinhos e os prêmios delas.
+// A jornada do primeiro apê: 3 etapas, 2 fases em cada. Cada fase acontece num cenário.
 // `premio`: as figurinhas que a etapa dá ao ser concluída. `desconto`: a etapa também dá os R$ 5 mil (depois das indicações).
-// `parabens`: a página de parabéns da etapa. Nomes e textos de rascunho: a ADN aprova antes de publicar.
+// `parabens`: a página de parabéns da etapa.
 export const ETAPAS = [
   { nome: 'Adeus, aluguel', sub: 'Da casa alugada ao plantão de vendas',
     premio: ['aluguel', 'goteira', 'sogra', 'juros', 'solteiro', 'banheiro'],
@@ -130,7 +128,7 @@ export const FIGURINHAS = {
 };
 
 // Cadastro na entrada (captação de leads, js/cadastro.js): o que se pergunta antes da primeira partida.
-// Os aceites repetem os do formulário do site da ADN, com o "18 anos ou mais" a mais. Rascunho: o jurídico da ADN aprova.
+// Os aceites repetem os do formulário do site da ADN, com o "18 anos ou mais" a mais.
 // O banco recebe o valor da esquerda de cada opção; a ADN pode trocar as faixas e as opções aqui.
 export const CADASTRO = {
   politica: 'https://adnconstrutora.com.br/politicas/',
@@ -157,7 +155,7 @@ export const mensagemCorretor = (codigo, indicados = 0) =>
   `Oi! Acabei de concluir o jogo Toc Toc, Adeneco! e ganhei ${DESCONTO} de desconto no meu apê. Meu código é ${codigo}.`
   + (indicados ? ` Também indiquei ${indicados === 1 ? 'um amigo' : `${indicados} amigos`} no jogo.` : '');
 
-// Antes do desconto, a pessoa pode indicar até 3 amigos (js/premios.js, supabase/indicacoes.sql). É opcional.
+// Antes do desconto, a pessoa pode indicar até 3 amigos (js/premios.js). É opcional.
 export const MAX_INDICACOES = 3;
 
 export const FASES_POR_ETAPA = 2;

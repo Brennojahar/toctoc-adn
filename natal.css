@@ -1,4 +1,4 @@
-/* Natal ADN (publicado em 24/11/2026): uma camada por cima do estilo.css e do visual.css.
+/* Natal ADN: uma camada por cima do estilo.css e do visual.css.
    Só vale quando o <html> tem a classe "natal" (js/natal.js liga pela data, ou com ?natal=1).
    Conceito "Natal de chave na mão": o presente é a chave do primeiro apê.
    - a noite de Natal no azul-Atlântico da ADN, com as luzes em amarelo-Alegria;
@@ -30,6 +30,7 @@
 .natal .painel > .pisca { z-index: 2; left: 24px; right: 24px; top: 3px; }
 .natal .hud > .pisca { top: -7px; }
 .natal .parabens-card > .pisca, .natal .rapida-card > .pisca { top: -6px; }
+.natal .parabens-card > .res-heroi { z-index: 7; }
 .natal .carregando > .pisca { top: var(--topo); }
 .natal .capa-cena > .pisca { top: var(--topo); }
 
@@ -37,9 +38,9 @@
 .natal .inicio { --capa-fundo: var(--noite); }
 .natal .capa-veu { background: linear-gradient(180deg, rgba(4, 22, 60, .5) 0%, rgba(4, 22, 60, 0) 24%, rgba(4, 22, 60, 0) 66%, var(--capa-fundo) 94%); }
 .natal .inicio .topo { padding-top: calc(var(--topo) + 26px); }
-.natal .logo3d { top: calc(var(--topo) + 58px); width: 66%; }
+.natal .logo3d { top: calc(var(--topo) + 88px); width: 56%; }
 
-/* ---------- o cartão de Natal na tela inicial (no lugar do cartão da Black Friday): o presente é a chave ---------- */
+/* ---------- o cartão de Natal na tela inicial o presente é a chave ---------- */
 .natal-card {
   position: relative;
   display: flex;

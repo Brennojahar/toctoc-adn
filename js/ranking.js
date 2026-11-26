@@ -1,4 +1,4 @@
-// Ranking compartilhado da partida rápida, guardado no banco (js/banco.js, supabase/ranking.sql).
+// Ranking compartilhado da partida rápida, guardado no banco (js/banco.js).
 // Qualquer um lê a tabela; só a função registrar_pontos escreve, conferindo o nome e a pontuação.
 import { ler, gravar, idJogador } from './salvo.js';
 import { pedir } from './banco.js';
@@ -26,8 +26,8 @@ export async function posicao(pontos) {
 }
 
 // Nome como vai aparecer: sem espaços sobrando, até 20 letras.
-export const limparNome = txt => (txt || '').replace(/\s+/g, ' ').trim().slice(0, 20);
-export const nomeValido = txt => limparNome(txt).length >= 2;
+const limparNome = txt => (txt || '').replace(/\s+/g, ' ').trim().slice(0, 20);
+const nomeValido = txt => limparNome(txt).length >= 2;
 
 // Campo para digitar o nome do ranking, usado na tela do ranking e no fim da partida rápida.
 export function formNome({ texto = 'Como você quer aparecer no ranking?', botaoTexto = 'Salvar', aoSalvar }) {

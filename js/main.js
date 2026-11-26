@@ -1,16 +1,16 @@
-import { inicio, jornada, rapida, ranking } from './telas.js';
+import { inicio, jornada, rapida, ranking, pegarAjudas } from './telas.js';
 import { partida } from './jogo.js';
 import { parabens, album } from './premios.js';
 import { cadastro, precisaCadastro, guardarOrigem, enviarLead, enviarIndicacoes } from './cadastro.js';
 import { destravar, tocarMusica } from './som.js';
 import { IMG } from './util.js';
 import { MONSTROS, FIGURINHAS } from './dados.js';
-import { ligarBlack } from './black.js';
+import { faseAtual } from './salvo.js';
 import { ligarNatal, natalAtivo, IMAGENS_NATAL } from './natal.js';
 import { avisoComputador } from './computador.js';
+import { ligarLinksDoSite } from './site.js';
 
 ligarNatal(); // Natal ADN: troca as artes e veste as telas (vem antes de tudo, porque muda as imagens que serão carregadas)
-ligarBlack(); // Black Friday ADN: de 09 a 26/11 o jogo veste o tema da campanha
 
 const tela = document.getElementById('tela');
 let limpar = null;
@@ -32,11 +32,13 @@ const ROTAS = [
   [/^#\/figurinhas$/, () => album(tela, { ir })],
   [/^#\/parabens\/(\d)$/, m => parabens(tela, { ir, k: Number(m[1]) })],
   [/^#\/cadastro$/, () => cadastro(tela, { ir, depois: () => depoisDoCadastro })],
-  [/^#\/partida\/(rapida|\d+)(?:\/([a-z,]+))?(?:\?.*)?$/, m => partida(tela, {
-    fase: m[1] === 'rapida' ? 'rapida' : Number(m[1]),
-    ajudas: m[2] ? m[2].split(',') : [],
-    ir,
-  })],
+  // a fase só abre se já estiver liberada na jornada (um link digitado à mão não pula fases);
+  // as ajudas vêm da folha "antes da fase", onde já foram descontadas, e não do endereço
+  [/^#\/partida\/(rapida|\d+)(?:\/[a-z,]+)?(?:\?.*)?$/, m => {
+    const fase = m[1] === 'rapida' ? 'rapida' : Number(m[1]);
+    if (fase !== 'rapida' && !(fase >= 1 && fase <= faseAtual())) return location.replace('#/jornada');
+    return partida(tela, { fase, ajudas: fase === 'rapida' ? [] : pegarAjudas(fase), ir });
+  }],
 ];
 
 function render() {
@@ -66,6 +68,7 @@ enviarLead(); // um cadastro que ficou sem internet vai agora
 enviarIndicacoes(); // e as indicações que ficaram esperando
 // o áudio só é liberado depois do primeiro toque (o iPhone só aceita no fim do toque ou no clique)
 ['pointerdown', 'touchend', 'click'].forEach(ev => window.addEventListener(ev, destravar, { passive: true }));
+ligarLinksDoSite(); // o "voltar ao site" da página no computador
 avisoComputador(); // no computador: "o jogo é melhor no celular", com o QR
 
 // carrega as imagens antes de abrir, para nada piscar no meio da partida

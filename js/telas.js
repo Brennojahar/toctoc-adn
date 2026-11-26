@@ -5,7 +5,7 @@ import { listarRanking, registrarPontos, posicao, formNome } from './ranking.js'
 import { alternarSom, somLigado, efeito } from './som.js';
 import { el, img, botao, chip, ICONES } from './util.js';
 import { figurinhasGanhas, TOTAL_FIGURINHAS, premioDaEtapa } from './premios.js';
-import { blackAtiva, fitas, cartaoBlack } from './black.js';
+import { botaoSiteCapa } from './site.js';
 
 function voltar(ir, destino) {
   const b = botao([], 'redondo', () => ir(destino), 'Voltar');
@@ -32,13 +32,12 @@ export function inicio(raiz, { ir }) {
   const n = faseAtual(s);
   const p = el('div', { class: 'pagina inicio' });
 
-  // O trio já vem dentro da cena da capa (a/capa.webp, feita pelo arte/capa.py), com a luz e as sombras do lugar.
+  // O trio já vem dentro da cena da capa (a/capa.webp), com a luz e as sombras do lugar.
   // Aqui fica só a área de toque de cada um, na mesma caixa que o trio ocupa na imagem, e o brilho da chave.
   const herois = el('div', { class: 'herois' }, [el('i', { class: 'brilho-chave' })]);
   [['tijolo', 'Conhecer o Tijolo'], ['adeneco', 'Conhecer o Adeneco'], ['gaia', 'Conhecer a Gaia']].forEach(([id, rotulo]) =>
     herois.append(botao([], `toque-heroi ${id}`, () => abrirInfo(p, 'heroi', id), rotulo)));
 
-  const black = blackAtiva();
   // o logo do jogo em 3D (a/logo-3d.webp) no lugar do título escrito
   const logo3d = img('logo-3d', 'logo3d');
   logo3d.alt = 'Toc Toc, Adeneco!';
@@ -47,11 +46,10 @@ export function inicio(raiz, { ir }) {
   const cena = el('div', { class: 'capa-cena' }, [
     img('capa', 'capa-img'),
     el('i', { class: 'capa-veu' }),
-    black && fitas(),
-    el('header', { class: 'topo topo-capa' }, [botaoSom(), img('logo-adn-branco', 'topo-logo'), chip(`Recorde ${s.recorde}`)]),
+    el('header', { class: 'topo topo-capa' }, [botaoSom(), botaoSiteCapa()]),
     logo3d,
     herois,
-  ].filter(Boolean));
+  ]);
   p.append(...[
     cena,
     el('div', { class: 'botoes' }, [
@@ -64,7 +62,6 @@ export function inicio(raiz, { ir }) {
       botao(['Minhas figurinhas', ganhas ? el('i', { class: 'badge', text: String(ganhas) }) : null].filter(Boolean),
         'btn secundario bloco', () => ir('#/figurinhas'), `Minhas figurinhas: ${ganhas} de ${TOTAL_FIGURINHAS}`),
     ]),
-    black && cartaoBlack(),
     el('section', { class: 'card elenco' }, [
       el('b', { text: 'Acerte os monstrinhos' }),
       el('small', { text: 'Clique e conheça os motivos que te impedem de conquistar os seus sonhos.' }),
@@ -172,6 +169,14 @@ export function jornada(raiz, { ir, abrir }) {
 }
 
 // ---------- antes da fase ----------
+// As ajudas escolhidas aqui vão direto para a partida, já descontadas (antes iam no endereço, que dava para editar à mão).
+let reserva = null;
+export function pegarAjudas(n) {
+  const r = reserva?.n === n ? reserva.ajudas : [];
+  reserva = null;
+  return r;
+}
+
 function abrirAntes(pagina, n, ir) {
   pagina.querySelector('.veu')?.remove();
   const cfg = configFase(n);
@@ -213,7 +218,8 @@ function abrirAntes(pagina, n, ir) {
       const s2 = ler();
       escolhidas.forEach(id => { s2.ajudas[id] = Math.max(0, (s2.ajudas[id] || 0) - 1); });
       gravar(s2);
-      ir(`#/partida/${n}${escolhidas.size ? '/' + [...escolhidas].join(',') : ''}`);
+      reserva = { n, ajudas: [...escolhidas] };
+      ir(`#/partida/${n}`);
     }),
   ]);
   folha.addEventListener('click', ev => ev.stopPropagation());
@@ -298,8 +304,8 @@ export function ranking(raiz, { ir }) {
 
   const linha = (pos, nome, pontos, souEu) => el('div', { class: 'card linha-rank' + (souEu ? ' eu' : '') + (pos <= 3 ? ` podio p${pos}` : '') }, [
     el('b', { class: 'pos', text: String(pos) }),
-    el('i', { text: nome.charAt(0).toUpperCase() }),
-    el('span', { text: souEu ? `${nome} (você)` : nome }),
+    el('i', { text: (nome || '?').charAt(0).toUpperCase() }),
+    el('span', { text: souEu ? (nome ? `${nome} (você)` : 'Você') : nome || 'Jogador' }),
     el('b', { text: String(pontos) }),
   ]);
 

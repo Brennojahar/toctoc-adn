@@ -25,10 +25,21 @@ function daVersao2(antigo, novo) {
   }
 }
 
+// Navegador que não deixa gravar (armazenamento bloqueado, aba anônima antiga): o jogo guarda aqui enquanto a página
+// está aberta. Sem isso, o cadastro voltava toda hora e o lead se perdia.
+let memoria = null;
+function lerTexto() {
+  try {
+    const t = localStorage.getItem(CHAVE);
+    if (t != null) return t;
+  } catch {}
+  return memoria || '{}';
+}
+
 export function ler() {
   const p = PADRAO();
   try {
-    const s = JSON.parse(localStorage.getItem(CHAVE) || '{}');
+    const s = JSON.parse(lerTexto());
     const junto = { ...p, ...s, ajudas: { ...p.ajudas, ...(s.ajudas || {}) } };
     if (s.versao !== VERSAO) {
       junto.versao = VERSAO;
@@ -43,7 +54,9 @@ export function ler() {
 }
 
 export function gravar(s) {
-  try { localStorage.setItem(CHAVE, JSON.stringify(s)); } catch {}
+  const t = JSON.stringify(s);
+  memoria = t;
+  try { localStorage.setItem(CHAVE, t); } catch {}
 }
 
 // A próxima fase que falta completar.

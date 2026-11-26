@@ -1,4 +1,4 @@
-// O banco do jogo: o Supabase do projeto toctoc-adn (supabase/ranking.sql e supabase/leads.sql).
+// O banco do jogo: o Supabase do projeto toctoc-adn.
 // Para ligar o jogo no banco da ADN, é trocar estes dois valores.
 // A chave é a pública ("publishable"), feita para ficar no site: quem protege as tabelas é a RLS,
 // e só as funções do banco escrevem, conferindo o que recebem.

@@ -1,30 +1,26 @@
-// Natal ADN (publicado em 24/11/2026, junto com o visual novo). Tudo o que é do Natal fica aqui e no natal.css.
+// Natal ADN. Tudo o que é do Natal fica aqui e no natal.css.
 // Fora do período o jogo volta sozinho ao visual normal: nenhuma outra parte do código precisa mudar.
-// Identidade aprovada pelo Breno em 18/11 (prancha em arte/natal/identidade-natal.jpg, que fica só no Mac):
-// "Natal de chave na mão". Noite no azul da ADN, luzes em amarelo, a fita do manual virando laço vermelho, sem neve.
+// "Natal de chave na mão": noite no azul da ADN, luzes em amarelo, a fita do manual virando laço vermelho, sem neve.
 // O Adeneco fica de gorro, sem capacete, em todos os bonecos, com o logo da ADN na barra branca.
 import { el, img, trocarImagens } from './util.js';
 import { efeito } from './som.js';
 import { DESCONTO } from './dados.js';
 
-export const NATAL = {
-  // datas do Breno (24/11/2026): o Natal entra já, no dia da publicação, e fica até o Dia de Reis.
-  // Enquanto o Natal vale, a Black Friday (que ia até 26/11) fica desligada. Depois de 06/01, o jogo volta sozinho ao visual novo sem enfeites.
+const NATAL = {
+  // de 24/11 até o Dia de Reis; depois de 06/01, o jogo volta sozinho ao visual sem enfeites
   inicio: '2026-11-24T00:00:00-03:00',
   fim: '2027-01-06T23:59:59-03:00',
-  // textos do cartão: rascunho, a ADN aprova antes de publicar
   rotulo: 'Natal ADN',
   chamada: ['Neste ', 'Natal', ', o presente é a chave do seu apê'],
   texto: `Conclua a jornada e ganhe ${DESCONTO} de desconto no seu primeiro apê.`,
   botao: 'Quero meu presente',
 };
 
-// Para conferir em qualquer data: ?natal=1 liga e ?natal=0 desliga. Com ?black=1, quem aparece é a Black Friday.
-const busca = new URLSearchParams(location.search);
-const forcar = busca.get('natal');
+// Para conferir em qualquer data: ?natal=1 liga e ?natal=0 desliga.
+const forcar = new URLSearchParams(location.search).get('natal');
 export function natalAtivo() {
   if (forcar === '1') return true;
-  if (forcar === '0' || busca.get('black') === '1') return false;
+  if (forcar === '0') return false;
   const agora = Date.now();
   return agora >= Date.parse(NATAL.inicio) && agora <= Date.parse(NATAL.fim);
 }
@@ -45,10 +41,13 @@ export const IMAGENS_NATAL = ['natal/chave', 'natal/laco'];
 // As luzes: amarelo-Alegria, vermelho do laço, creme e azul-Céu. O fio faz barrigas e cada barriga tem três lâmpadas.
 // O desenho é refeito quando a largura de onde ele está pendurado muda.
 const CORES = ['#ffd200', '#ff4d5e', '#fff6dc', '#38b2e8'];
+let piscas = 0;
 function desenhar(p) {
   const w = Math.round(p.clientWidth);
   if (w < 60 || p.dataset.w === String(w)) return;
   p.dataset.w = String(w);
+  if (!p.dataset.id) p.dataset.id = `pisca-borra-${++piscas}`;
+  const borra = p.dataset.id;
   const vao = w / Math.max(2, Math.round(w / 86));
   const amp = 8;
   let d = 'M0,5';
@@ -60,15 +59,17 @@ function desenhar(p) {
       const lx = Number((x + vao * t).toFixed(1));
       const ly = 5 + 4 * amp * t * (1 - t);
       const c = CORES[k % CORES.length];
-      luzes += `<g class="luz${k % 2 ? ' b' : ''}"><circle class="halo" cx="${lx}" cy="${ly + 8}" r="11" fill="${c}" filter="url(#pisca-borra)"/>`
+      luzes += `<g class="luz${k % 2 ? ' b' : ''}"><circle class="halo" cx="${lx}" cy="${ly + 8}" r="11" fill="${c}" filter="url(#${borra})"/>`
         + `<rect x="${lx - 2.5}" y="${ly - 1}" width="5" height="4.5" rx="1" fill="#0b2f2a"/>`
         + `<ellipse cx="${lx}" cy="${ly + 8.5}" rx="4.6" ry="6" fill="${c}"/><ellipse cx="${lx - 1.4}" cy="${ly + 6.5}" rx="1.3" ry="2" fill="#fff" opacity=".75"/></g>`;
       k += 1;
     }
   }
-  p.innerHTML = `<svg viewBox="0 0 ${w} 34" aria-hidden="true"><defs><filter id="pisca-borra" x="-100%" y="-100%" width="300%" height="300%"><feGaussianBlur stdDeviation="4"/></filter></defs><path class="fio" d="${d}"/>${luzes}</svg>`;
+  p.innerHTML = `<svg viewBox="0 0 ${w} 34" aria-hidden="true"><defs><filter id="${borra}" x="-100%" y="-100%" width="300%" height="300%"><feGaussianBlur stdDeviation="4"/></filter></defs><path class="fio" d="${d}"/>${luzes}</svg>`;
 }
-const medidor = 'ResizeObserver' in window ? new ResizeObserver(lista => lista.forEach(x => desenhar(x.target))) : null;
+const medidor = 'ResizeObserver' in window
+  ? new ResizeObserver(lista => lista.forEach(x => (x.target.isConnected ? desenhar(x.target) : medidor.unobserve(x.target))))
+  : null;
 function pisca(onde, classe = '') {
   if (onde.querySelector(':scope > .pisca')) return;
   const p = el('div', { class: `pisca ${classe}`.trim() });
@@ -77,7 +78,7 @@ function pisca(onde, classe = '') {
   medidor?.observe(p);
 }
 
-// O cartão de Natal da tela inicial, no lugar do cartão da Black Friday: o presente é a chave.
+// O cartão de Natal da tela inicial: o presente é a chave.
 function cartaoNatal() {
   const [antes, destaque, depois] = NATAL.chamada;
   const botao = el('a', { class: 'btn principal bloco', href: '#/jornada', text: NATAL.botao });

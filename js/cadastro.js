@@ -1,5 +1,5 @@
 // Cadastro na entrada (captação de leads): antes da primeira partida, a pessoa deixa nome, WhatsApp, e-mail e cidade,
-// escolhe o monstrinho que mais atrapalha e responde perguntas de um toque. Tudo vai para o banco (supabase/leads.sql).
+// escolhe o monstrinho que mais atrapalha e responde perguntas de um toque. Tudo vai para o banco.
 // Depois de enviado, o aparelho guarda só o id secreto do cadastro e o primeiro nome (sugerido no ranking).
 // O jogo também conta ao banco o que a pessoa fez: etapas, fases, recorde, partidas e o clique no corretor.
 import { CADASTRO, MONSTROS, cenarioDaFase } from './dados.js';
@@ -47,7 +47,7 @@ export async function enviarLead() {
   enviarIndicacoes();
 }
 
-// Manda as indicações do prêmio final (supabase/indicacoes.sql). Sem internet, ou com o cadastro ainda na fila,
+// Manda as indicações do prêmio final. Sem internet, ou com o cadastro ainda na fila,
 // elas esperam no aparelho. Depois de enviadas, os nomes e telefones saem do aparelho e fica só a conta.
 export async function enviarIndicacoes() {
   const s = ler();

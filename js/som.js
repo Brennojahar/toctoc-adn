@@ -26,7 +26,7 @@ function audio() {
   return ctx;
 }
 
-// Sons gravados (Seed Audio): o latido do Tijolo e o "Aprovado." na voz da Gaia.
+// Sons gravados: o latido do Tijolo e o "Aprovado." na voz da Gaia.
 const AMOSTRAS = { latido: 'a/sons/latido.mp3', aprovado: 'a/sons/gaia-aprovado.mp3' };
 const buffers = {};
 function carregarAmostras() {
@@ -169,11 +169,6 @@ function efeitoCru(nome, n = 0) {
       tom(170, t + 0.03, 0.24, 'sawtooth', 0.1, 85);
       ruido(t + 0.03, 0.2, 0.3, 520, 'lowpass');
       break;
-    case 'combo': {
-      const base = 523 * 1.06 ** Math.min(n, 24);
-      [1, 1.25, 1.5].forEach((m, i) => tom(base * m, t + i * 0.045, 0.15, 'square', 0.06));
-      break;
-    }
     case 'erro':
       tom(130, t, 0.34, 'sawtooth', 0.18, 98);
       ruido(t, 0.1, 0.45, 320, 'lowpass');

@@ -12,7 +12,6 @@
   --lilas: #9b7bff;
   --vermelho: #e23d3d;
   --verde: #1d9a55;
-  --papel: #ffffff;
   --creme: #f6f8fd;
   --texto: #16203a;
   --mut: #68728a;
@@ -110,6 +109,9 @@ img { -webkit-user-drag: none; user-select: none; }
     radial-gradient(40% 30% at 50% 108%, rgba(255, 210, 0, .16), transparent 70%);
 }
 .aparelho { grid-area: aparelho; }
+/* espaço em cima para o "Voltar ao site da ADN" não encostar no celular */
+.moldura { padding-top: 62px; }
+.aparelho { height: min(846px, calc(100dvh - 86px)); }
 .lado { grid-area: lado; }
 .pc-celular {
   grid-area: celular;
@@ -188,7 +190,7 @@ img { -webkit-user-drag: none; user-select: none; }
 
 @media (max-width: 760px), (pointer: coarse) and (max-width: 1100px) {
   .moldura { display: block; padding: 0; }
-  .pc-celular, .pc-espia, .pc-entrada { display: none; }
+  .pc-celular, .pc-espia, .pc-entrada, .pc-voltar { display: none; }
   .aparelho { width: 100%; height: 100dvh; padding: 0; border-radius: 0; box-shadow: none; }
   .tela { border-radius: 0; }
   .lado { display: none; }
@@ -257,23 +259,6 @@ img { -webkit-user-drag: none; user-select: none; }
   -webkit-tap-highlight-color: transparent;
 }
 .btn:active { transform: translateY(3px); }
-.btn.azul {
-  color: #fff;
-  background: linear-gradient(180deg, #1d93d6 0%, var(--azul) 100%);
-  box-shadow: 0 5px 0 var(--azul-escuro), 0 12px 22px rgba(0, 112, 184, .35);
-  text-shadow: 0 1px 0 rgba(0, 30, 69, .35);
-}
-.btn.azul:active { box-shadow: 0 2px 0 var(--azul-escuro), 0 6px 14px rgba(0, 112, 184, .3); }
-.btn.amarelo {
-  color: var(--azul-noite);
-  background: linear-gradient(180deg, var(--amarelo-claro) 0%, var(--amarelo) 100%);
-  box-shadow: 0 5px 0 var(--amarelo-escuro), 0 12px 22px rgba(201, 138, 0, .3);
-}
-.btn.branco {
-  color: var(--azul);
-  background: #fff;
-  box-shadow: 0 4px 0 #cdd7ec, 0 10px 20px rgba(0, 30, 69, .12);
-}
 .btn.grande { min-height: 58px; font-size: 18px; border-radius: 20px; }
 .btn.bloco { width: 100%; }
 .link {
@@ -305,45 +290,14 @@ img { -webkit-user-drag: none; user-select: none; }
   pointer-events: none;
   background: linear-gradient(180deg, rgba(0, 30, 69, .42) 0%, rgba(0, 30, 69, 0) 24%, rgba(0, 30, 69, 0) 66%, var(--capa-fundo) 94%);
 }
-.capa-cena > .topo, .capa-cena > .logo, .capa-cena > .fitas { position: relative; z-index: 2; }
+.capa-cena > .topo { position: relative; z-index: 2; }
 .inicio > :not(.veu) { position: relative; z-index: 2; }
 /* a página rola: nenhum bloco encolhe para caber na altura da tela */
 .inicio > *, .rapida > * { flex-shrink: 0; }
 
-.inicio > .logo { z-index: 4; }
-.logo {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-top: 6px;
-  line-height: .9;
-  transform: rotate(-3deg);
-  font-family: var(--titulo);
-  font-weight: 800;
-}
-.logo b {
-  font-size: 48px;
-  font-weight: 900;
-  color: var(--amarelo);
-  -webkit-text-stroke: 3px var(--azul-escuro);
-  paint-order: stroke fill;
-  text-shadow: 0 5px 0 var(--azul-escuro), 0 12px 22px rgba(0, 30, 69, .4);
-  letter-spacing: -.03em;
-}
 /* a palavra de destaque em script, como o manual pede (Mayor; aqui, Lily Script One) */
-.logo b + b {
-  margin-top: 4px;
-  font-family: var(--script);
-  font-size: 52px;
-  font-weight: 400;
-  letter-spacing: 0;
-  color: #fff;
-  -webkit-text-stroke: 3px var(--azul);
-  text-shadow: 0 5px 0 var(--azul-escuro), 0 12px 22px rgba(0, 30, 69, .4);
-}
-/* o logo oficial da ADN no topo da capa */
+/* o logo oficial da ADN no topo da capa (é o botão de voltar ao site) */
 .topo-logo { width: 86px; height: auto; filter: drop-shadow(0 2px 6px rgba(0, 30, 69, .45)); }
-/* som e recorde têm larguras diferentes: com 3 colunas iguais nas pontas, o logo fica no centro da tela */
 .topo-capa { display: grid; grid-template-columns: 1fr auto 1fr; }
 .topo-capa > :first-child { justify-self: start; }
 .topo-capa > :last-child { justify-self: end; }
@@ -555,7 +509,6 @@ img { -webkit-user-drag: none; user-select: none; }
 .pip.atual { background: var(--azul); color: #fff; box-shadow: 0 0 0 3px rgba(0, 112, 184, .25); }
 .pip.atual em { color: #bfe3f7; }
 .pip:disabled { opacity: .55; cursor: default; }
-.ok-chip { align-self: flex-start; padding: 4px 10px; border-radius: 10px; background: #e5f6ec; color: var(--verde); font-size: 12px; font-weight: 900; }
 
 /* ---------- folha (bottom sheet) ---------- */
 .veu {
@@ -787,11 +740,6 @@ img { -webkit-user-drag: none; user-select: none; }
 }
 @keyframes desce { to { transform: translate(-50%, 115%) scale(1.04, .94); } }
 @keyframes balanca { 0%, 100% { rotate: -2deg; } 50% { rotate: 2deg; } }
-@keyframes monstro-some {
-  0% { transform: translate(-50%, 0) scale(1.22, .7); filter: brightness(1.6); }
-  40% { transform: translate(-50%, 0) scale(.85, 1.15); filter: brightness(1); }
-  100% { transform: translate(-50%, 10%) scale(.2); opacity: 0; }
-}
 @keyframes monstro-tonteia {
   0% { transform: translate(-50%, 2%) scale(1.16, .78); filter: brightness(1.45); animation-timing-function: cubic-bezier(.33, 0, .67, 1); }
   18% { transform: translate(-50%, 0) scale(.95, 1.06) rotate(-7deg); filter: brightness(1); animation-timing-function: cubic-bezier(.33, 0, .67, 1); }
@@ -1192,21 +1140,7 @@ img { -webkit-user-drag: none; user-select: none; }
 .res-heroi.alterna .quadro.b { animation: quadro-b .9s infinite; }
 @keyframes quadro-a { 0%, 49.9% { opacity: 1; } 50%, 100% { opacity: 0; } }
 @keyframes quadro-b { 0%, 49.9% { opacity: 0; transform: none; } 50%, 100% { opacity: 1; transform: scale(1.04); } }
-.res-tit { text-align: center; font-family: var(--titulo); font-size: 32px; line-height: 1; color: var(--azul-escuro); }
-.res-frase { margin-top: -6px; text-align: center; color: var(--azul); font-size: 15px; font-weight: 900; }
-.res-estrelas { display: flex; justify-content: center; gap: 6px; }
-.res-estrelas i { font-size: 42px; font-style: normal; color: #e2e7f1; line-height: 1; }
-.res-estrelas i.on {
-  color: #ffb800;
-  text-shadow: 0 3px 0 #c47d0b, 0 0 18px rgba(255, 190, 40, .55);
-  animation: conta .5s var(--mola) both, estrela-pulsa 1.2s ease-in-out infinite;
-  animation-delay: calc(var(--k) * .15s), calc(.8s + var(--k) * .2s);
-}
 @keyframes estrela-pulsa { 0%, 100% { scale: 1; rotate: 0deg; } 50% { scale: 1.18; rotate: -8deg; } }
-.res-numeros { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 2px 0 6px; }
-.res-numeros span { display: flex; flex-direction: column; align-items: center; padding: 10px 4px; border-radius: 16px; background: #eef7fc; }
-.res-numeros b { font-family: var(--titulo); font-size: 24px; line-height: 1.1; font-weight: 800; }
-.res-numeros small { color: var(--mut); font-size: 11px; font-weight: 800; text-align: center; }
 .premio { padding: 10px 12px; border-radius: 14px; background: #fff6d6; color: #7a5200; font-size: 13px; font-weight: 900; text-align: center; }
 .res-links { display: flex; justify-content: center; gap: 18px; }
 .pausa { display: flex; flex-direction: column; gap: 10px; }
@@ -1227,11 +1161,10 @@ img { -webkit-user-drag: none; user-select: none; }
 
 @media (prefers-reduced-motion: reduce) {
   .grade.treme, .relogio.pressa, .sai.tijolo, .sai.gaia { animation-duration: .01s; animation-iteration-count: 1; }
-  .pulsa, .herois-img, .brilho-chave, .monstro-bt img, .info-img, .res-estrelas i.on { animation: none; }
+  .pulsa, .brilho-chave, .monstro-bt img, .info-img { animation: none; }
 }
 
 /* ---------- prêmios ---------- */
-.res-chip { margin-top: -4px; }
 
 /* linha de prêmio no card de cada etapa da jornada */
 /* em cima o rótulo (e o "Ver prêmio" à direita); embaixo, a fileira das figurinhas */
@@ -1249,7 +1182,6 @@ img { -webkit-user-drag: none; user-select: none; }
 .etapa-premio-figs img { width: 38px; height: 38px; object-fit: contain; }
 .etapa-premio-figs b { margin-right: 6px; }
 .etapa-premio-figs b { font-size: 13px; font-weight: 900; color: var(--azul-noite); }
-.etapa-premio img.apagada, .fig-mini.apagada img { filter: grayscale(1) brightness(1.05); opacity: .45; }
 .etapa-premio.ganho { background: #e7f6ee; }
 .etapa-premio.ganho > small { color: var(--verde); }
 .mini-bt {
@@ -1566,3 +1498,53 @@ img.bloqueada { -webkit-touch-callout: none; pointer-events: none; }
 .pc-entrada-jogar { background: var(--amarelo); color: var(--azul-escuro); box-shadow: inset 0 -3px 0 var(--mostarda); }
 .pc-entrada-copiar { background: var(--creme); color: var(--azul); box-shadow: inset 0 0 0 1.5px var(--linha); }
 @media (prefers-reduced-motion: reduce) { .pc-entrada, .pc-entrada-caixa { animation: none; } }
+
+/* ---------- voltar ao site da ADN (25/11/2026): o jogo mora dentro do site ---------- */
+/* na capa, o logo da ADN do topo vira um botão com a setinha */
+.site-adn {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: 6px 12px 6px 6px;
+  border-radius: 99px;
+  background: rgba(0, 30, 69, .42);
+  box-shadow: inset 0 0 0 1.5px rgba(255, 255, 255, .45), 0 4px 12px rgba(0, 12, 40, .25);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  color: #fff;
+  text-decoration: none;
+  transition: transform .12s ease, background .12s ease;
+}
+.site-adn:hover { background: rgba(0, 30, 69, .6); }
+.site-adn:active { transform: scale(.95); }
+.site-adn:focus-visible { outline: 3px solid var(--amarelo); outline-offset: 2px; }
+.site-adn-seta { display: grid; place-items: center; width: 22px; height: 22px; }
+.site-adn-seta svg { width: 18px; height: 18px; }
+.site-adn .topo-logo { width: 70px; }
+/* na pausa, um link discreto embaixo dos dois botões */
+.pausa-site { align-self: center; margin-top: 4px; padding: 6px 10px; color: var(--azul); text-decoration: underline; text-underline-offset: 3px; }
+/* no computador, o link fixo no canto de cima da página */
+.pc-voltar {
+  position: fixed;
+  z-index: 5;
+  top: 18px;
+  left: 24px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 14px 8px 8px;
+  border-radius: 99px;
+  color: var(--texto-lado);
+  font: 800 14px/1 var(--fonte);
+  text-decoration: none;
+  background: color-mix(in srgb, var(--texto-lado) 7%, transparent);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--texto-lado) 14%, transparent);
+  transition: background .12s ease;
+}
+.pc-voltar:hover { background: color-mix(in srgb, var(--texto-lado) 13%, transparent); }
+.pc-voltar:focus-visible { outline: 3px solid var(--amarelo); outline-offset: 2px; }
+.pc-voltar svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round; }
+/* no celular e no tablet o link fixo não aparece (fica aqui no fim para vencer o .pc-voltar acima) */
+@media (max-width: 760px), (pointer: coarse) and (max-width: 1100px) {
+  .pc-voltar { display: none; }
+}
